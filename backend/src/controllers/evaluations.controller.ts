@@ -27,7 +27,7 @@ export async function listEvaluationsController(
 
   const evaluations = await prisma.evaluation.findMany({
     where: { disciplineId: id },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { date: { sort: 'asc', nulls: 'last' } },
   });
 
   return reply.send(evaluations);

@@ -86,6 +86,11 @@
 }
 
 /* ── Timetable (weekly grid) ── */
+#schedule-card {
+  max-height: none;
+  overflow-y: visible;
+}
+
 .home-timetable-wrapper {
   overflow-x: auto;
   border-radius: var(--radius-md);

@@ -135,6 +135,8 @@
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   box-shadow: var(--shadow-ambient);
+  max-height: 28rem;
+  overflow-y: auto;
 }
 
 .card-header {
@@ -309,6 +311,18 @@
 .badge--pending {
   background: var(--primary-fixed);
   color: var(--on-primary-fixed-variant);
+}
+
+.badge--clickable {
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease, filter 0.15s ease;
+}
+
+.badge--clickable:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+  filter: brightness(0.95);
 }
 
 /* ── Loading / Error full-page state ── */

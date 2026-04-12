@@ -25,7 +25,7 @@ export async function listTopicsController(
 
   const topics = await prisma.topic.findMany({
     where: { disciplineId: id },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { dueDate: { sort: 'asc', nulls: 'last' } },
   });
 
   return reply.send(topics);
