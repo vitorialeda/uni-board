@@ -6,19 +6,6 @@ import Topbar from "../components/Topbar";
 import { API_URL, formatDate } from "../lib/utils";
 import "./Home.css";
 
-type Discipline = {
-  id: string;
-  name: string;
-  description: string | null;
-  progress: number;
-};
-
-type DisciplineCreateResponse = {
-  id: string;
-  name: string;
-  description: string | null;
-};
-
 type Evaluation = {
   id: string;
   title: string;
@@ -30,8 +17,28 @@ type Evaluation = {
   disciplineId: string;
 };
 
-type Schedule = {
+type ScheduleItem = {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+};
+
+type Discipline = {
   id: string;
+  name: string;
+  description: string | null;
+  progress: number;
+  schedules: ScheduleItem[];
+  evaluations: Evaluation[];
+};
+
+type DisciplineCreateResponse = {
+  id: string;
+  name: string;
+  description: string | null;
+};
+
+type Schedule = {
   dayOfWeek: number;
   startTime: string;
   endTime: string;
@@ -210,70 +217,32 @@ const Home = () => {
         setDisciplines(loadedDisciplines);
         setTodos(todosResponse.data);
 
-        if (loadedDisciplines.length === 0) {
-          setSchedules([]);
-          setWeeklyEvaluations([]);
-          return;
-        }
-
-        const [evaluationsByDiscipline, schedulesByDiscipline] =
-          await Promise.all([
-            Promise.all(
-              loadedDisciplines.map((discipline) =>
-                axios
-                  .get<Evaluation[]>(
-                    `${API_URL}/disciplines/${discipline.id}/evaluations`,
-                    {
-                      headers,
-                    },
-                  )
-                  .then((response) => ({
-                    disciplineName: discipline.name,
-                    evaluations: response.data,
-                  })),
-              ),
+        // Extract schedules from disciplines (already included in response)
+        const aggregatedSchedules = loadedDisciplines
+          .flatMap((discipline) =>
+            (Array.isArray(discipline.schedules) ? discipline.schedules : []).map(
+              (schedule) => ({
+                ...schedule,
+                disciplineId: discipline.id,
+                disciplineName: discipline.name,
+              }),
             ),
-            Promise.all(
-              loadedDisciplines.map((discipline) =>
-                axios
-                  .get<Schedule[]>(
-                    `${API_URL}/disciplines/${discipline.id}/schedules`,
-                    {
-                      headers,
-                    },
-                  )
-                  .then((response) => ({
-                    disciplineName: discipline.name,
-                    schedules: response.data,
-                  })),
-              ),
-            ),
-          ]);
-
-        const aggregatedSchedules = schedulesByDiscipline
-          .flatMap(({ disciplineName, schedules: disciplineSchedules }) =>
-            disciplineSchedules.map((schedule) => ({
-              ...schedule,
-              disciplineName,
-            })),
           )
           .sort((a, b) => {
-            if (a.dayOfWeek !== b.dayOfWeek) {
-              return a.dayOfWeek - b.dayOfWeek;
-            }
+            if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
             return a.startTime.localeCompare(b.startTime);
           });
 
+        // Extract weekly evaluations from disciplines (already included in response)
         const { start, end } = getCurrentWeekRange();
-        const aggregatedWeeklyEvaluations = evaluationsByDiscipline
-          .flatMap(({ disciplineName, evaluations: disciplineEvaluations }) =>
-            disciplineEvaluations
-              .filter((evaluation) =>
-                isEvaluationInCurrentWeek(evaluation, start, end),
-              )
+        const aggregatedWeeklyEvaluations = loadedDisciplines
+          .flatMap((discipline) =>
+            (discipline.evaluations ?? [])
+              .filter((evaluation) => isEvaluationInCurrentWeek(evaluation, start, end))
               .map((evaluation) => ({
                 ...evaluation,
-                disciplineName,
+                disciplineId: discipline.id,
+                disciplineName: discipline.name,
               })),
           )
           .sort((a, b) => {
@@ -353,6 +322,8 @@ const Home = () => {
           name: response.data.name,
           description: response.data.description ?? null,
           progress: 0,
+          schedules: [],
+          evaluations: [],
         },
       ]);
 

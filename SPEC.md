@@ -61,16 +61,16 @@ model Discipline {
   description String?  // ementa/objetivos
   references  String?  // referências bibliográficas (texto livre ou markdown)
   createdAt   DateTime @default(now())
+  schedules   Json     @default("[]") // [{ dayOfWeek: 0-6, startTime: "HH:MM", endTime: "HH:MM" }]
 
   userId   String
   user     User     @relation(fields: [userId], references: [id])
 
-  tasks       Task[]
+  topics      Topic[]
   evaluations Evaluation[]
-  schedules   Schedule[]
 }
 
-model Task {
+model Topic {
   id           String   @id @default(uuid())
   title        String
   description  String?
@@ -79,7 +79,7 @@ model Task {
   createdAt    DateTime @default(now())
 
   disciplineId String
-  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
 }
 
 model Evaluation {
@@ -92,17 +92,7 @@ model Evaluation {
   createdAt    DateTime @default(now())
 
   disciplineId String
-  discipline   Discipline @relation(fields: [disciplineId], references: [id])
-}
-
-model Schedule {
-  id           String  @id @default(uuid())
-  dayOfWeek    Int     // 0 = domingo, 1 = segunda, ..., 6 = sábado
-  startTime    String  // "08:00"
-  endTime      String  // "10:00"
-
-  disciplineId String
-  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
 }
 
 model Todo {
@@ -130,12 +120,12 @@ model Todo {
 ### Disciplinas
 - Pertencem ao usuário autenticado — um usuário nunca acessa disciplinas de outro
 - `references` é texto livre (pode ser markdown)
-- Uma disciplina pode ter zero ou mais: tasks, evaluations, schedules
+- Uma disciplina pode ter zero ou mais: topics, evaluations, schedules
 
 ### Progresso
 - Calculado por disciplina
-- Fórmula: `progresso = (tasks_concluídas / total_tasks * 0.5) + (evaluations_concluídas / total_evaluations * 0.5)`
-- Se não houver tasks, o peso vai 100% para evaluations e vice-versa
+- Fórmula: `progresso = (topics_concluídos / total_topics * 0.5) + (evaluations_concluídas / total_evaluations * 0.5)`
+- Se não houver topics, o peso vai 100% para evaluations e vice-versa
 - Retornado como float entre 0 e 1 (ex: `0.75` = 75%)
 - O endpoint de progresso geral retorna a média do progresso de todas as disciplinas do usuário
 
@@ -188,6 +178,8 @@ model Todo {
     "id": "uuid",
     "name": "string",
     "description": "string|null",
+    "schedules": [...],
+    "evaluations": [...],
     "progress": 0.75
   }
 ]
@@ -200,7 +192,7 @@ model Todo {
   "name": "string",
   "description": "string|null",
   "references": "string|null",
-  "tasks": [...],
+  "topics": [...],
   "evaluations": [...],
   "schedules": [...]
 }
@@ -244,16 +236,14 @@ model Todo {
 
 ### Schedules
 
-| Método | Rota                                  | Descrição       | Auth |
-|--------|---------------------------------------|-----------------|------|
-| GET    | /disciplines/:id/schedules            | Listar horários | ✅   |
-| POST   | /disciplines/:id/schedules            | Criar horário   | ✅   |
-| DELETE | /disciplines/:id/schedules/:schedId   | Deletar horário | ✅   |
+Horários são armazenados como JSON dentro da disciplina (campo `schedules`). São gerenciados via `PUT /disciplines/:id` enviando o array completo de schedules.
 
-**POST /disciplines/:id/schedules — body:**
+**Formato do schedule:**
 ```json
 { "dayOfWeek": 1, "startTime": "08:00", "endTime": "10:00" }
 ```
+
+O endpoint `GET /disciplines/:id/schedules` retorna os horários da disciplina com IDs sintéticos para compatibilidade.
 
 ---
 

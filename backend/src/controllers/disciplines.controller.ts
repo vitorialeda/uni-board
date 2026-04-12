@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { prisma } from "../database/prisma.js";
 import { calculateProgress } from "../services/progress.service.js";
+import { assertDisciplineOwnership } from "../middlewares/assert-discipline-ownership.js";
 
 const scheduleItemSchema = z.object({
   dayOfWeek: z.number().int().min(0).max(6),
@@ -37,6 +38,7 @@ export async function listDisciplinesController(
     name: d.name,
     description: d.description,
     schedules: d.schedules,
+    evaluations: d.evaluations,
     progress: calculateProgress(d.topics, d.evaluations),
   }));
 
@@ -143,17 +145,8 @@ export async function updateDisciplineController(
     return reply.status(400).send({ error: "Body inválido" });
   }
 
-  const discipline = await prisma.discipline.findUnique({ where: { id } });
-
-  if (!discipline) {
-    return reply.status(404).send({ error: "Disciplina não encontrada" });
-  }
-
-  if (discipline.userId !== userId) {
-    return reply
-      .status(403)
-      .send({ error: "Recurso pertence a outro usuário" });
-  }
+  const discipline = await assertDisciplineOwnership(id, userId, reply);
+  if (!discipline) return;
 
   const updated = await prisma.discipline.update({
     where: { id },
@@ -172,17 +165,8 @@ export async function deleteDisciplineController(
   const { id } = request.params as { id: string };
   const { userId } = request.user;
 
-  const discipline = await prisma.discipline.findUnique({ where: { id } });
-
-  if (!discipline) {
-    return reply.status(404).send({ error: "Disciplina não encontrada" });
-  }
-
-  if (discipline.userId !== userId) {
-    return reply
-      .status(403)
-      .send({ error: "Recurso pertence a outro usuário" });
-  }
+  const discipline = await assertDisciplineOwnership(id, userId, reply);
+  if (!discipline) return;
 
   await prisma.discipline.delete({ where: { id } });
 
