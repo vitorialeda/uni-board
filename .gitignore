@@ -1,0 +1,12 @@
+# dotenv environment variable files
+*/.env
+
+# Dependency directories
+*/node_modules/
+
+# Build outputs
+*/dist/
+
+# Design and spec files
+DESIGN.md
+SPEC.md
