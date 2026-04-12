@@ -135,6 +135,8 @@
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   box-shadow: var(--shadow-ambient);
+  max-height: 28rem;
+  overflow-y: auto;
 }
 
 .card-header {
