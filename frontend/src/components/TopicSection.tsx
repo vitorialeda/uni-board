@@ -111,6 +111,23 @@ const TopicSection = ({
     }
   };
 
+  const handleToggle = async (topicId: string) => {
+    const token = getToken(navigate);
+    if (!token) return;
+    try {
+      const response = await axios.patch<Topic>(
+        `${API_URL}/disciplines/${disciplineId}/topics/${topicId}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      onTopicsChange(topics.map((t) => (t.id === topicId ? response.data : t)));
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ error?: string }>(error)) {
+        if (handle401(error.response?.status, navigate)) return;
+      }
+    }
+  };
+
   return (
     <section className="card" id="topics-card">
       <div className="card-header">
@@ -175,9 +192,13 @@ const TopicSection = ({
                 </span>
               </div>
               <div className="disc-topic-right">
-                <span className={`badge ${topic.completed ? "badge--done" : "badge--pending"}`}>
+                <button
+                  type="button"
+                  className={`badge ${topic.completed ? "badge--done" : "badge--pending"} badge--clickable`}
+                  onClick={() => handleToggle(topic.id)}
+                >
                   {topic.completed ? "Concluído" : "Pendente"}
-                </span>
+                </button>
                 <ItemDropdown
                   id={`topic-${topic.id}`}
                   openDropdownId={openDropdownId}

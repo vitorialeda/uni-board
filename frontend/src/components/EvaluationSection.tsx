@@ -116,6 +116,23 @@ const EvaluationSection = ({
     }
   };
 
+  const handleToggle = async (evalId: string) => {
+    const token = getToken(navigate);
+    if (!token) return;
+    try {
+      const response = await axios.patch<Evaluation>(
+        `${API_URL}/disciplines/${disciplineId}/evaluations/${evalId}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      onEvaluationsChange(evaluations.map((e) => (e.id === evalId ? response.data : e)));
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ error?: string }>(error)) {
+        if (handle401(error.response?.status, navigate)) return;
+      }
+    }
+  };
+
   return (
     <section className="card" id="evaluations-card">
       <div className="card-header">
@@ -184,9 +201,13 @@ const EvaluationSection = ({
               </div>
               <div className="disc-eval-right">
                 <span className="disc-eval-grade">{ev.grade ?? "–"}/{ev.maxGrade}</span>
-                <span className={`badge ${ev.completed ? "badge--done" : "badge--pending"}`}>
+                <button
+                  type="button"
+                  className={`badge ${ev.completed ? "badge--done" : "badge--pending"} badge--clickable`}
+                  onClick={() => handleToggle(ev.id)}
+                >
                   {ev.completed ? "Concluída" : "Pendente"}
-                </span>
+                </button>
                 <ItemDropdown
                   id={`eval-${ev.id}`}
                   openDropdownId={openDropdownId}

@@ -311,6 +311,18 @@
   color: var(--on-primary-fixed-variant);
 }
 
+.badge--clickable {
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease, filter 0.15s ease;
+}
+
+.badge--clickable:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+  filter: brightness(0.95);
+}
+
 /* ── Loading / Error full-page state ── */
 .page-state {
   min-height: 100vh;
