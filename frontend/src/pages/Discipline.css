@@ -1,0 +1,242 @@
+/* ─────────────────────────────────────────────────────────────
+   Discipline Detail Page — page-specific styles only
+   (shared styles in /src/shared.css)
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Progress banner ── */
+.disc-progress-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-section);
+  padding: var(--space-5) var(--space-6);
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-ambient);
+}
+
+.disc-progress-ring {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.disc-progress-ring svg {
+  transform: rotate(-90deg);
+}
+
+.disc-progress-ring-bg {
+  fill: none;
+  stroke: var(--surface-variant);
+  stroke-width: 6;
+}
+
+.disc-progress-ring-fill {
+  fill: none;
+  stroke: url(#disc-progress-gradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.disc-progress-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-title-lg);
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.disc-progress-details {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.disc-progress-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.disc-progress-stat-value {
+  font-family: var(--font-display);
+  font-size: var(--text-title-lg);
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.disc-progress-stat-label {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ── Topic list ── */
+.disc-topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-topic-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.disc-topic-item:hover {
+  background: var(--surface-container-high);
+}
+
+.disc-topic-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.disc-topic-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.disc-topic-meta {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+.disc-topic-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+/* ── Evaluation list ── */
+.disc-eval-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-eval-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.disc-eval-item:hover {
+  background: var(--surface-container-high);
+}
+
+.disc-eval-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.disc-eval-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.disc-eval-meta {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+.disc-eval-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.disc-eval-grade {
+  font-family: var(--font-display);
+  font-size: var(--text-body-md);
+  font-weight: 700;
+  color: var(--on-surface);
+  background: var(--surface-container-high);
+  padding: 0.125rem var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+/* ── Schedule chips ── */
+.disc-schedule-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-schedule-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.disc-schedule-chip:hover {
+  background: var(--surface-container-high);
+}
+
+.disc-schedule-day {
+  font-family: var(--font-display);
+  font-size: var(--text-label-lg);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.disc-schedule-time {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+}
+
+/* ── References ── */
+.disc-references-text {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  padding: var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+}
+
+/* ── Responsive (page-specific) ── */
+@media (max-width: 768px) {
+  .disc-progress-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .disc-progress-details {
+    justify-content: center;
+  }
+}

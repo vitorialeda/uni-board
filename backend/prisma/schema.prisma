@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  disciplines Discipline[]
+  todos       Todo[]
+}
+
+model Discipline {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  references  String?
+  createdAt   DateTime @default(now())
+  schedules   Json     @default("[]") // [{ dayOfWeek: 0-6, startTime: "HH:MM", endTime: "HH:MM" }]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  topics      Topic[]
+  evaluations Evaluation[]
+}
+
+model Topic {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  dueDate      DateTime?
+  completed    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+
+  disciplineId String
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+}
+
+model Evaluation {
+  id           String    @id @default(uuid())
+  title        String
+  date         DateTime?
+  grade        Float?
+  maxGrade     Float     @default(10)
+  completed    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+
+  disciplineId String
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+}
+
+
+model Todo {
+  id        String   @id @default(uuid())
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}

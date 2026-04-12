@@ -1,0 +1,121 @@
+/* ─────────────────────────────────────────────────────────────
+   The Elevated Academic — Design System
+   ───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── Tokens ── */
+:root {
+  /* Surface */
+  --surface:                  #f8f9fa;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low:    #f3f4f5;
+  --surface-container:        #edeeef;
+  --surface-container-high:   #e7e8e9;
+  --surface-container-highest:#dfe0e1;
+  --surface-variant:          #dfe2f0;
+
+  /* Brand */
+  --primary:                  #0050cb;
+  --primary-container:        #0066ff;
+  --primary-fixed:            #dae1ff;
+  --on-primary:               #ffffff;
+  --on-primary-fixed-variant: #003fa4;
+
+  /* Secondary */
+  --secondary-container:      #9bb4fe;
+  --on-secondary-container:   #294487;
+
+  /* Text */
+  --on-surface:               #191c1d;
+  --on-surface-variant:       #43474e;
+  --outline-variant:          #c2c6d8;
+
+  /* Radius */
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-full: 9999px;
+
+  /* Shadow */
+  --shadow-ambient: 0 12px 32px -4px rgba(25, 28, 29, 0.06);
+  --shadow-elevated: 0 20px 48px -8px rgba(25, 28, 29, 0.12);
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-section: 2.75rem;
+
+  /* Typography scale */
+  --font-display: 'Manrope', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  --text-display-lg: 3.5rem;
+  --text-display-md: 2.75rem;
+  --text-display-sm: 2.25rem;
+  --text-headline-lg: 2rem;
+  --text-headline-md: 1.75rem;
+  --text-headline-sm: 1.5rem;
+  --text-title-lg:    1.25rem;
+  --text-title-md:    1.125rem;
+  --text-body-lg:     1rem;
+  --text-body-md:     0.875rem;
+  --text-label-lg:    0.875rem;
+  --text-label-sm:    0.75rem;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--on-surface);
+  background-color: var(--surface);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-container);
+}
+
+/* ── Utility: visually-hidden ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}

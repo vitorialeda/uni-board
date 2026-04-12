@@ -1,0 +1,306 @@
+/* ─────────────────────────────────────────────────────────────
+   Home Page — page-specific styles only
+   (shared styles in /src/shared.css)
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Discipline list ── */
+.home-discipline-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+}
+
+.home-discipline-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+  text-decoration: none;
+}
+
+.home-discipline-item:hover {
+  background: var(--surface-container-high);
+}
+
+.home-discipline-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.home-discipline-name {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.home-discipline-desc {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Progress bar ── */
+.home-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.home-progress-label {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.home-progress-bar {
+  width: 80px;
+  height: 6px;
+  background: var(--surface-variant);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.home-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-container) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+/* ── Timetable (weekly grid) ── */
+.home-timetable-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+}
+
+.home-timetable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--space-2) var(--space-2);
+  table-layout: fixed;
+}
+
+.home-timetable thead tr {
+  background: var(--surface-container-low);
+}
+
+.home-timetable th {
+  font-family: var(--font-display);
+  font-size: var(--text-label-sm);
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-align: center;
+  padding: var(--space-3) var(--space-2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-timetable th:first-child {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  text-align: left;
+  padding-left: var(--space-4);
+  width: 7.5rem;
+}
+
+.home-timetable th:last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.home-timetable-corner {
+  font-size: var(--text-label-sm) !important;
+  color: var(--on-surface-variant) !important;
+}
+
+.home-timetable-day-header {
+  min-width: 6rem;
+}
+
+.home-timetable tbody tr {
+  transition: background 0.15s ease;
+}
+
+.home-timetable tbody tr:hover {
+  background: var(--surface-container-low);
+}
+
+.home-timetable-time {
+  font-family: var(--font-body);
+  font-size: var(--text-label-lg);
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  padding: var(--space-3) var(--space-4);
+  white-space: nowrap;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.home-timetable-time-sep {
+  margin: 0 0.15em;
+  opacity: 0.5;
+}
+
+.home-timetable-cell {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 0%;
+  padding: var(--space-2);
+  height: 3rem;
+}
+
+.home-timetable-cell--filled {
+  border-radius: var(--radius-md);
+}
+
+.home-timetable-discipline {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  font-weight: 600;
+  color: #f5f7fa;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.home-timetable-discipline:hover {
+  opacity: 0.85;
+  text-decoration: underline;
+}
+
+.home-timetable-empty {
+  font-size: var(--text-label-sm);
+  color: var(--outline-variant);
+  opacity: 0.5;
+}
+
+/* ── Evaluation list ── */
+.home-eval-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.home-eval-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+}
+
+.home-eval-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.home-eval-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  font-weight: 600;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-eval-discipline {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+.home-eval-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.home-eval-date {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+/* ── Todo list ── */
+.home-todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.home-todo-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.home-todo-item:hover {
+  background: var(--surface-container-high);
+}
+
+.home-todo-check {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--outline-variant);
+  border-radius: 0.3rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  color: transparent;
+  font-size: 0.65rem;
+}
+
+.home-todo-check--done {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.home-todo-check:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.home-todo-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  flex: 1;
+}
+
+.home-todo-title--done {
+  text-decoration: line-through;
+  color: var(--on-surface-variant);
+}
