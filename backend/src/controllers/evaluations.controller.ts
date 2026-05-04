@@ -11,6 +11,7 @@ const createEvaluationSchema = z.object({
 
 const updateEvaluationSchema = createEvaluationSchema.partial().extend({
   grade: z.number().optional(),
+  completed: z.boolean().optional(),
 });
 
 // GET /disciplines/:id/evaluations
@@ -89,7 +90,7 @@ export async function updateEvaluationController(
     return reply.status(404).send({ error: "Avaliação não encontrada" });
   }
 
-  const { title, date, grade, maxGrade } = parsed.data;
+  const { title, date, grade, maxGrade, completed } = parsed.data;
 
   const updated = await prisma.evaluation.update({
     where: { id: evalId },
@@ -98,6 +99,7 @@ export async function updateEvaluationController(
       date: date ? new Date(date) : undefined,
       grade,
       maxGrade,
+      completed,
     },
   });
 

@@ -2,13 +2,13 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "../database/prisma.js";
 const registerSchema = z.object({
-    name: z.string().min(1),
+    name: z.string().min(1).max(200),
     email: z.email(),
-    password: z.string().min(6),
+    password: z.string().min(6).max(128),
 });
 const loginSchema = z.object({
     email: z.email(),
-    password: z.string().min(1),
+    password: z.string().min(1).max(128),
 });
 function signAuthToken(app, userId, email) {
     return app.jwt.sign({ userId, email }, { expiresIn: "7d" });

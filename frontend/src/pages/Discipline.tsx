@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Topbar from "../components/Topbar";
@@ -7,6 +7,7 @@ import TopicSection from "../components/TopicSection";
 import EvaluationSection from "../components/EvaluationSection";
 import ScheduleSection from "../components/ScheduleSection";
 import ReferencesSection from "../components/ReferencesSection";
+import RagImportModal from "../components/RagImportModal";
 import { API_URL, calculateProgress } from "../lib/utils";
 import { handle401 } from "../lib/auth";
 import type { DisciplineDetails } from "../lib/types";
@@ -19,6 +20,9 @@ const Discipline = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [discipline, setDiscipline] = useState<DisciplineDetails | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [showRagModal, setShowRagModal] = useState(false);
+  const [editingProfessor, setEditingProfessor] = useState(false);
+  const [professorDraft, setProfessorDraft] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,6 +51,21 @@ const Discipline = () => {
     };
     fetchDiscipline();
   }, [id, navigate]);
+
+  /* ── Refetch after RAG import ── */
+  const refetchDiscipline = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !id) return;
+    try {
+      const response = await axios.get<DisciplineDetails>(
+        `${API_URL}/disciplines/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setDiscipline(response.data);
+    } catch {
+      // silently fail — data was already inserted
+    }
+  }, [id]);
 
   /* ── Loading & Error states ── */
 
@@ -79,6 +98,22 @@ const Discipline = () => {
   /* ── Derived data ── */
   const progress = calculateProgress(discipline.topics, discipline.evaluations);
 
+  const handleSaveProfessor = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      await axios.put(
+        `${API_URL}/disciplines/${discipline.id}`,
+        { professor: professorDraft.trim() || null },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setDiscipline((prev) => prev ? { ...prev, professor: professorDraft.trim() || null } : prev);
+      setEditingProfessor(false);
+    } catch (err) {
+      if (axios.isAxiosError(err) && handle401(err.response?.status, navigate)) return;
+    }
+  };
+
   /* ── Render ── */
   return (
     <div className="page-root">
@@ -86,11 +121,50 @@ const Discipline = () => {
 
       <main className="page-content">
         <div className="page-header">
-          <p className="page-header-eyebrow">Disciplina</p>
-          <h1 className="page-header-title">{discipline.name}</h1>
-          {discipline.description && (
-            <p className="page-header-desc">{discipline.description}</p>
-          )}
+          <div className="page-header-row" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+            <div>
+              <p className="page-header-eyebrow">Disciplina</p>
+              <h1 className="page-header-title">{discipline.name}</h1>
+
+              {editingProfessor ? (
+                <div className="professor-edit">
+                  <input
+                    className="professor-edit-input"
+                    type="text"
+                    value={professorDraft}
+                    onChange={(e) => setProfessorDraft(e.target.value)}
+                    placeholder="Nome do professor"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveProfessor();
+                      if (e.key === "Escape") setEditingProfessor(false);
+                    }}
+                  />
+                  <button className="btn-secondary" onClick={handleSaveProfessor} style={{ padding: '0.25rem 0.75rem', fontSize: 'var(--text-label-sm)' }}>Salvar</button>
+                  <button className="btn-secondary btn-secondary--cancel" onClick={() => setEditingProfessor(false)} style={{ padding: '0.25rem 0.75rem', fontSize: 'var(--text-label-sm)' }}>Cancelar</button>
+                </div>
+              ) : (
+                <p
+                  className={`page-header-professor page-header-professor--editable`}
+                  onClick={() => { setEditingProfessor(true); setProfessorDraft(discipline.professor ?? ""); }}
+                  title="Clique para editar"
+                >
+                  {discipline.professor ? `Prof. ${discipline.professor}` : "+ Adicionar professor"}
+                </p>
+              )}
+
+              {discipline.description && (
+                <p className="page-header-desc">{discipline.description}</p>
+              )}
+            </div>
+            <button
+              className="btn-secondary"
+              onClick={() => setShowRagModal(true)}
+              style={{ marginTop: '0.5rem' }}
+            >
+              Importar Documento
+            </button>
+          </div>
         </div>
 
         <ProgressBanner
@@ -133,6 +207,17 @@ const Discipline = () => {
           />
         </div>
       </main>
+
+      {showRagModal && (
+        <RagImportModal
+          disciplineId={discipline.id}
+          onClose={() => setShowRagModal(false)}
+          onConfirmed={() => {
+            setShowRagModal(false);
+            refetchDiscipline();
+          }}
+        />
+      )}
     </div>
   );
 };

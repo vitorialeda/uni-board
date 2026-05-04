@@ -1,0 +1,508 @@
+/* ─────────────────────────────────────────────────────────────
+   RAG Import Modal — The Elevated Academic
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Overlay ── */
+.rag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(25, 28, 29, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: rag-fade-in 0.2s ease;
+}
+
+@keyframes rag-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal panel ── */
+.rag-modal {
+  position: relative;
+  width: min(42rem, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  padding: var(--space-8);
+  animation: rag-slide-up 0.25s ease;
+}
+
+@keyframes rag-slide-up {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Close button ── */
+.rag-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.rag-close:hover {
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+}
+
+/* ── Header ── */
+.rag-header {
+  margin-bottom: var(--space-6);
+}
+
+.rag-header-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  margin-bottom: var(--space-1);
+}
+
+.rag-header-title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-sm);
+  font-weight: 800;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+}
+
+.rag-header-desc {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+  margin-top: var(--space-1);
+  line-height: 1.5;
+}
+
+/* ── Instructions panel ── */
+.rag-instructions {
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rag-instructions-title {
+  font-family: var(--font-display);
+  font-size: var(--text-label-lg);
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.rag-instructions-list {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+  line-height: 1.7;
+  padding-left: 1.25rem;
+  margin: 0;
+}
+
+.rag-instructions-list li {
+  margin-bottom: 0.125rem;
+}
+
+.rag-instructions-list strong {
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+/* ── Limits / warnings ── */
+.rag-limits {
+  background: var(--surface-container);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.rag-limits-title {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.rag-limits-list {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.rag-limits-list li {
+  margin-bottom: 0.125rem;
+}
+
+/* ── Step 1: Input area ── */
+.rag-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rag-tabs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.rag-tab {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-label-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+}
+
+.rag-tab--active {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.rag-textarea {
+  width: 100%;
+  min-height: 10rem;
+  padding: var(--space-4);
+  background: var(--surface-container-low);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  transition: border-color 0.2s ease;
+}
+
+.rag-textarea:focus {
+  border-color: rgba(0, 80, 203, 0.4);
+}
+
+.rag-textarea::placeholder {
+  color: var(--on-surface-variant);
+  opacity: 0.55;
+}
+
+/* ── PDF upload ── */
+.rag-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 10rem;
+  padding: var(--space-6);
+  background: var(--surface-container-low);
+  border: 2px dashed var(--outline-variant);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.rag-upload-zone:hover {
+  background: var(--surface-container);
+  border-color: var(--primary);
+}
+
+.rag-upload-icon {
+  font-size: 2rem;
+  color: var(--on-surface-variant);
+}
+
+.rag-upload-label {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+  text-align: center;
+}
+
+.rag-upload-label strong {
+  color: var(--primary);
+}
+
+.rag-upload-hint {
+  font-size: var(--text-label-sm);
+  opacity: 0.7;
+}
+
+.rag-file-name {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: #145a2e;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-3);
+  background: #d4edda;
+  border-radius: var(--radius-full);
+}
+
+/* ── Actions row ── */
+.rag-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+/* ── Loading state ── */
+.rag-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-10) 0;
+}
+
+.rag-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid var(--surface-container-high);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: rag-spin 0.7s linear infinite;
+}
+
+@keyframes rag-spin {
+  to { transform: rotate(360deg); }
+}
+
+.rag-loading-text {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+.rag-loading-subtext {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface-variant);
+}
+
+/* ── Review notice ── */
+.rag-review-notice {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-primary-fixed-variant);
+  background: var(--primary-fixed);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+}
+
+.rag-review-notice strong {
+  font-weight: 600;
+}
+
+/* ── Step 2: Review ── */
+.rag-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.rag-review-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rag-review-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rag-review-section-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title-md);
+  font-weight: 700;
+  color: var(--on-surface);
+  letter-spacing: -0.01em;
+}
+
+.rag-review-count {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+  background: var(--surface-container);
+  padding: 0.125rem var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+/* ── Review item cards ── */
+.rag-review-item {
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rag-review-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rag-review-item-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.rag-review-item-meta {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+.rag-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.rag-remove-btn:hover {
+  background: rgba(186, 26, 26, 0.08);
+  color: #ba1a1a;
+}
+
+/* ── Review text fields ── */
+.rag-review-textarea {
+  width: 100%;
+  min-height: 4rem;
+  padding: var(--space-3);
+  background: var(--surface-container-lowest);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  transition: border-color 0.2s ease;
+}
+
+.rag-review-textarea:focus {
+  border-color: rgba(0, 80, 203, 0.4);
+}
+
+/* ── Success banner ── */
+.rag-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-10) 0;
+  text-align: center;
+}
+
+.rag-success-icon {
+  font-family: var(--font-display);
+  font-size: var(--text-title-lg);
+  font-weight: 800;
+  color: #145a2e;
+  background: #d4edda;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+}
+
+.rag-success-title {
+  font-family: var(--font-display);
+  font-size: var(--text-title-lg);
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.rag-success-detail {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.rag-success-hint {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+  max-width: 28rem;
+}
+
+/* ── Error ── */
+.rag-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(186, 26, 26, 0.06);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: #8c1d18;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .rag-modal {
+    padding: var(--space-5);
+    width: 96vw;
+    max-height: 92vh;
+  }
+
+  .rag-instructions {
+    padding: var(--space-3) var(--space-4);
+  }
+}

@@ -14,6 +14,7 @@ const createDisciplineSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
   references: z.string().max(10000).optional(),
+  professor: z.string().max(200).optional(),
   schedules: z.array(scheduleItemSchema).optional(),
 });
 
@@ -37,6 +38,7 @@ export async function listDisciplinesController(
     id: d.id,
     name: d.name,
     description: d.description,
+    professor: d.professor,
     schedules: d.schedules,
     evaluations: d.evaluations,
     progress: calculateProgress(d.topics, d.evaluations),
@@ -57,13 +59,14 @@ export async function createDisciplineController(
   }
 
   const { userId } = request.user;
-  const { name, description, references, schedules } = parsed.data;
+  const { name, description, references, professor, schedules } = parsed.data;
 
   const discipline = await prisma.discipline.create({
     data: {
       name,
       description,
       references,
+      professor,
       schedules: schedules ?? [],
       userId,
     },

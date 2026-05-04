@@ -27,6 +27,7 @@ type Discipline = {
   id: string;
   name: string;
   description: string | null;
+  professor: string | null;
   progress: number;
   schedules: ScheduleItem[];
   evaluations: Evaluation[];
@@ -36,6 +37,7 @@ type DisciplineCreateResponse = {
   id: string;
   name: string;
   description: string | null;
+  professor: string | null;
 };
 
 type Schedule = {
@@ -321,6 +323,7 @@ const Home = () => {
           id: response.data.id,
           name: response.data.name,
           description: response.data.description ?? null,
+          professor: response.data.professor ?? null,
           progress: 0,
           schedules: [],
           evaluations: [],
@@ -577,9 +580,9 @@ const Home = () => {
                     >
                       <div className="home-discipline-item-left">
                         <span className="home-discipline-name">{d.name}</span>
-                        {d.description && (
+                        {d.professor && (
                           <span className="home-discipline-desc">
-                            {d.description}
+                            {`Prof. ${d.professor}`}
                           </span>
                         )}
                       </div>

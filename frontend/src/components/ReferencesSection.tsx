@@ -66,7 +66,7 @@ const ReferencesSection = ({
             setIsFormOpen((prev) => !prev);
           }}
         >
-          {isFormOpen ? "✕ Cancelar" : references?.trim() ? "✎ Editar" : "+ Adicionar"}
+          {isFormOpen ? "✕ Cancelar" : references?.trim() ? "Editar" : "+ Adicionar"}
         </button>
       </div>
 

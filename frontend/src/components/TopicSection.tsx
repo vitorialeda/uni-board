@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_URL, formatDate, toLocalDatetimeValue } from "../lib/utils";
@@ -29,13 +29,34 @@ const TopicSection = ({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [completed, setCompleted] = useState(false);
   const [formError, setFormError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const cardRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (!isFormOpen || !editingId) return;
+
+    const animationId = requestAnimationFrame(() => {
+      const card = cardRef.current;
+      const form = formRef.current;
+      if (!card || !form) return;
+
+      const cardRect = card.getBoundingClientRect();
+      const formRect = form.getBoundingClientRect();
+      const targetTop = card.scrollTop + (formRect.top - cardRect.top) - 8;
+
+      card.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+    });
+
+    return () => cancelAnimationFrame(animationId);
+  }, [isFormOpen, editingId]);
 
   const openCreate = () => {
     setEditingId(null);
-    setTitle(""); setDescription(""); setDueDate("");
+    setTitle(""); setDescription(""); setDueDate(""); setCompleted(false);
     setFormError("");
     setIsFormOpen(true);
   };
@@ -45,6 +66,7 @@ const TopicSection = ({
     setTitle(topic.title);
     setDescription(topic.description ?? "");
     setDueDate(toLocalDatetimeValue(topic.dueDate));
+    setCompleted(topic.completed);
     setFormError("");
     setIsFormOpen(true);
   };
@@ -59,10 +81,16 @@ const TopicSection = ({
     if (!trimmedTitle) { setFormError("Informe o título do tópico."); return; }
 
     setIsSubmitting(true);
-    const payload: { title: string; description?: string; dueDate?: string } = { title: trimmedTitle };
+    const payload: {
+      title: string;
+      description?: string;
+      dueDate?: string;
+      completed?: boolean;
+    } = { title: trimmedTitle };
     const trimmedDesc = description.trim();
     if (trimmedDesc) payload.description = trimmedDesc;
     if (dueDate) payload.dueDate = new Date(dueDate).toISOString();
+    if (editingId) payload.completed = completed;
 
     try {
       if (editingId) {
@@ -80,7 +108,7 @@ const TopicSection = ({
         );
         onTopicsChange([...topics, response.data]);
       }
-      setTitle(""); setDescription(""); setDueDate("");
+      setTitle(""); setDescription(""); setDueDate(""); setCompleted(false);
       setEditingId(null);
       setIsFormOpen(false);
     } catch (error: unknown) {
@@ -129,7 +157,7 @@ const TopicSection = ({
   };
 
   return (
-    <section className="card" id="topics-card">
+    <section ref={cardRef} className="card" id="topics-card">
       <div className="card-header">
         <div>
           <h2 className="card-title">Tópicos</h2>
@@ -150,7 +178,7 @@ const TopicSection = ({
       </div>
 
       {isFormOpen && (
-        <form className="inline-form" onSubmit={handleSubmit}>
+        <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
           <div className="inline-form-field">
             <label className="inline-form-label" htmlFor="topic-title">Título</label>
             <input id="topic-title" className="inline-form-input" type="text" placeholder="Ex: Limites e Continuidade" value={title} required onChange={(e) => setTitle(e.target.value)} />
@@ -165,6 +193,17 @@ const TopicSection = ({
               <input id="topic-due" className="inline-form-input" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
             </div>
           </div>
+          {editingId && (
+            <label className="inline-form-checkbox" htmlFor="topic-completed">
+              <input
+                id="topic-completed"
+                type="checkbox"
+                checked={completed}
+                onChange={(e) => setCompleted(e.target.checked)}
+              />
+              Marcar como concluído
+            </label>
+          )}
           {formError && <p className="inline-form-error">{formError}</p>}
           <div className="inline-form-footer">
             <button type="submit" className="btn-primary" disabled={isSubmitting}>

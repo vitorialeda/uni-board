@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { prisma } from "../database/prisma.js";
 const createTodoSchema = z.object({
-    title: z.string().min(1),
+    title: z.string().min(1).max(200),
 });
 // GET /todos
 export async function listTodosController(_app, request, reply) {
     const { userId } = request.user;
     const todos = await prisma.todo.findMany({
         where: { userId },
+        orderBy: { createdAt: 'desc' },
     });
     return reply.send(todos);
 }

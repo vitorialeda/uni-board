@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_URL, formatDate, toLocalDatetimeValue } from "../lib/utils";
@@ -30,13 +30,34 @@ const EvaluationSection = ({
   const [date, setDate] = useState("");
   const [maxGrade, setMaxGrade] = useState("10");
   const [grade, setGrade] = useState("");
+  const [completed, setCompleted] = useState(false);
   const [formError, setFormError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const cardRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (!isFormOpen || !editingId) return;
+
+    const animationId = requestAnimationFrame(() => {
+      const card = cardRef.current;
+      const form = formRef.current;
+      if (!card || !form) return;
+
+      const cardRect = card.getBoundingClientRect();
+      const formRect = form.getBoundingClientRect();
+      const targetTop = card.scrollTop + (formRect.top - cardRect.top) - 8;
+
+      card.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+    });
+
+    return () => cancelAnimationFrame(animationId);
+  }, [isFormOpen, editingId]);
 
   const openCreate = () => {
     setEditingId(null);
-    setTitle(""); setDate(""); setMaxGrade("10"); setGrade("");
+    setTitle(""); setDate(""); setMaxGrade("10"); setGrade(""); setCompleted(false);
     setFormError("");
     setIsFormOpen(true);
   };
@@ -47,6 +68,7 @@ const EvaluationSection = ({
     setDate(toLocalDatetimeValue(ev.date));
     setMaxGrade(String(ev.maxGrade));
     setGrade(ev.grade !== null ? String(ev.grade) : "");
+    setCompleted(ev.completed);
     setFormError("");
     setIsFormOpen(true);
   };
@@ -63,11 +85,18 @@ const EvaluationSection = ({
     if (!Number.isFinite(parsedMaxGrade) || parsedMaxGrade <= 0) { setFormError("A nota máxima deve ser maior que zero."); return; }
 
     setIsSubmitting(true);
-    const payload: { title: string; date?: string; maxGrade: number; grade?: number } = {
+    const payload: {
+      title: string;
+      date?: string;
+      maxGrade: number;
+      grade?: number;
+      completed?: boolean;
+    } = {
       title: trimmedTitle, maxGrade: parsedMaxGrade,
     };
     if (date) payload.date = new Date(date).toISOString();
     if (grade !== "") payload.grade = Number(grade);
+    if (editingId) payload.completed = completed;
 
     try {
       if (editingId) {
@@ -85,7 +114,7 @@ const EvaluationSection = ({
         );
         onEvaluationsChange([...evaluations, response.data]);
       }
-      setTitle(""); setDate(""); setMaxGrade("10"); setGrade("");
+      setTitle(""); setDate(""); setMaxGrade("10"); setGrade(""); setCompleted(false);
       setEditingId(null);
       setIsFormOpen(false);
     } catch (error: unknown) {
@@ -134,7 +163,7 @@ const EvaluationSection = ({
   };
 
   return (
-    <section className="card" id="evaluations-card">
+    <section ref={cardRef} className="card" id="evaluations-card">
       <div className="card-header">
         <div>
           <h2 className="card-title">Avaliações</h2>
@@ -155,7 +184,7 @@ const EvaluationSection = ({
       </div>
 
       {isFormOpen && (
-        <form className="inline-form" onSubmit={handleSubmit}>
+        <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
           <div className="inline-form-field">
             <label className="inline-form-label" htmlFor="eval-title">Título</label>
             <input id="eval-title" className="inline-form-input" type="text" placeholder="Ex: Prova 1" value={title} required onChange={(e) => setTitle(e.target.value)} />
@@ -175,6 +204,17 @@ const EvaluationSection = ({
               <label className="inline-form-label" htmlFor="eval-grade">Nota obtida</label>
               <input id="eval-grade" className="inline-form-input" type="number" min="0" step="0.1" placeholder="Opcional" value={grade} onChange={(e) => setGrade(e.target.value)} />
             </div>
+          )}
+          {editingId && (
+            <label className="inline-form-checkbox" htmlFor="eval-completed">
+              <input
+                id="eval-completed"
+                type="checkbox"
+                checked={completed}
+                onChange={(e) => setCompleted(e.target.checked)}
+              />
+              Marcar como concluída
+            </label>
           )}
           {formError && <p className="inline-form-error">{formError}</p>}
           <div className="inline-form-footer">

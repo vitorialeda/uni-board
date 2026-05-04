@@ -9,6 +9,7 @@ import { evaluationsRoutes } from "./routes/evaluations.routes.js";
 import { schedulesRoutes } from "./routes/schedules.routes.js";
 import { todosRoutes } from "./routes/todos.routes.js";
 import { progressRoutes } from "./routes/progress.routes.js";
+import { ragRoutes } from "./routes/rag.routes.js";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ export function build() {
   app.register(schedulesRoutes, { prefix: "/disciplines/:id/schedules" });
   app.register(todosRoutes, { prefix: "/todos" });
   app.register(progressRoutes, { prefix: "/progress" });
+  app.register(ragRoutes, { prefix: "/rag" });
 
   return app;
 }

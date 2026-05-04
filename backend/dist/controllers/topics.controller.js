@@ -2,11 +2,13 @@ import { z } from "zod";
 import { prisma } from "../database/prisma.js";
 import { assertDisciplineOwnership } from "../middlewares/assert-discipline-ownership.js";
 const createTopicSchema = z.object({
-    title: z.string().min(1),
-    description: z.string().optional(),
+    title: z.string().min(1).max(200),
+    description: z.string().max(2000).optional(),
     dueDate: z.iso.datetime().optional(),
 });
-const updateTopicSchema = createTopicSchema.partial();
+const updateTopicSchema = createTopicSchema.partial().extend({
+    completed: z.boolean().optional(),
+});
 // GET /disciplines/:id/topics
 export async function listTopicsController(_app, request, reply) {
     const { id } = request.params;
@@ -16,6 +18,7 @@ export async function listTopicsController(_app, request, reply) {
         return;
     const topics = await prisma.topic.findMany({
         where: { disciplineId: id },
+        orderBy: { dueDate: { sort: 'asc', nulls: 'last' } },
     });
     return reply.send(topics);
 }
@@ -58,13 +61,14 @@ export async function updateTopicController(_app, request, reply) {
     if (!topic) {
         return reply.status(404).send({ error: "Tópico não encontrado" });
     }
-    const { title, description, dueDate } = parsed.data;
+    const { title, description, dueDate, completed } = parsed.data;
     const updated = await prisma.topic.update({
         where: { id: topicId },
         data: {
             title,
             description,
             dueDate: dueDate ? new Date(dueDate) : undefined,
+            completed,
         },
     });
     return reply.send(updated);

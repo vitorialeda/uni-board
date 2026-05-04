@@ -22,6 +22,7 @@ model Discipline {
   name        String
   description String?
   references  String?
+  professor   String?
   createdAt   DateTime @default(now())
   schedules   Json     @default("[]") // [{ dayOfWeek: 0-6, startTime: "HH:MM", endTime: "HH:MM" }]
 

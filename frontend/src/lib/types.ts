@@ -26,6 +26,7 @@ export type DisciplineDetails = {
   name: string;
   description: string | null;
   references: string | null;
+  professor: string | null;
   topics: Topic[];
   evaluations: Evaluation[];
   schedules: Schedule[];
