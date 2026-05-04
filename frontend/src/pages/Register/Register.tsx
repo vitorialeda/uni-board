@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
@@ -36,6 +36,10 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    document.title = "Cadastro | Dashboard Universitário";
+  }, []);
 
   const passwordStrength = useMemo(
     () => getPasswordStrength(password),

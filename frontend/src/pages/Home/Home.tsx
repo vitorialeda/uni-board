@@ -158,6 +158,10 @@ const Home = () => {
   const [todoActionError, setTodoActionError] = useState("");
   const [togglingTodoId, setTogglingTodoId] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = "Visão Geral | Dashboard Universitário";
+  }, []);
+
   const userName = useMemo(() => {
     try {
       const raw = localStorage.getItem("user");

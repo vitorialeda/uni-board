@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { formatDate, toLocalDatetimeValue } from "../lib/utils";
 import { api } from "../lib/api";
@@ -33,6 +33,10 @@ const TopicSection = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { cardRef, formRef } = useCardFormScroll(isFormOpen, editingId);
+  const orderedTopics = useMemo(
+    () => [...topics].sort((a, b) => Number(a.completed) - Number(b.completed)),
+    [topics],
+  );
 
   const openCreate = () => {
     setEditingId(null);
@@ -189,7 +193,7 @@ const TopicSection = ({
         <p className="empty-text">Nenhum tópico cadastrado.</p>
       ) : (
         <ul className="disc-topic-list">
-          {topics.map((topic) => (
+          {orderedTopics.map((topic) => (
             <li key={topic.id} className="disc-topic-item">
               <div className="disc-topic-left">
                 <span className="disc-topic-title">{topic.title}</span>

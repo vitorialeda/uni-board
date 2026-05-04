@@ -25,6 +25,14 @@ const Discipline = () => {
   const [professorDraft, setProfessorDraft] = useState("");
 
   useEffect(() => {
+    if (discipline?.name) {
+      document.title = `${discipline.name} | Dashboard Universitário`;
+      return;
+    }
+    document.title = "Disciplina | Dashboard Universitário";
+  }, [discipline?.name]);
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) { navigate("/login"); return; }
     if (!id) { setErrorMessage("Disciplina inválida."); setIsLoading(false); return; }

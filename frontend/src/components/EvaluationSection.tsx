@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { formatDate, toLocalDatetimeValue } from "../lib/utils";
 import { api } from "../lib/api";
@@ -34,6 +34,10 @@ const EvaluationSection = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { cardRef, formRef } = useCardFormScroll(isFormOpen, editingId);
+  const orderedEvaluations = useMemo(
+    () => [...evaluations].sort((a, b) => Number(a.completed) - Number(b.completed)),
+    [evaluations],
+  );
 
   const openCreate = () => {
     setEditingId(null);
@@ -201,7 +205,7 @@ const EvaluationSection = ({
         <p className="empty-text">Nenhuma avaliação cadastrada.</p>
       ) : (
         <ul className="disc-eval-list">
-          {evaluations.map((ev) => (
+          {orderedEvaluations.map((ev) => (
             <li key={ev.id} className="disc-eval-item">
               <div className="disc-eval-left">
                 <span className="disc-eval-title">{ev.title}</span>
