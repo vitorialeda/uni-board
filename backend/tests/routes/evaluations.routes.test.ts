@@ -4,7 +4,7 @@
 // As evaluations pertencem a uma disciplina, que pertence a um usuário.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { build } from '../app'
+import { build } from '../../src/app'
 import type { FastifyInstance } from 'fastify'
 
 let app: FastifyInstance

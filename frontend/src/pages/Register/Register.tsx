@@ -2,7 +2,7 @@ import type { FormEvent } from "react";
 import { useState, useMemo } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
+import { api } from "../../lib/api";
 import "./Register.css";
 
 type RegisterResponse = {
@@ -62,10 +62,11 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<RegisterResponse>(
-        `${API_URL}/auth/register`,
-        { name: name.trim(), email: email.trim(), password },
-      );
+      const response = await api.post<RegisterResponse>("/auth/register", {
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      });
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

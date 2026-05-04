@@ -2,8 +2,9 @@ import { useEffect, useMemo, useCallback, useState } from "react";
 import type { FormEvent } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import Topbar from "../components/Topbar";
-import { API_URL, formatDate } from "../lib/utils";
+import Topbar from "../../components/Topbar";
+import { formatDate } from "../../lib/utils";
+import { api } from "../../lib/api";
 import "./Home.css";
 
 type Evaluation = {
@@ -205,14 +206,10 @@ const Home = () => {
       setIsLoading(true);
       setErrorMessage("");
 
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
       try {
         const [disciplinesResponse, todosResponse] = await Promise.all([
-          axios.get<Discipline[]>(`${API_URL}/disciplines`, { headers }),
-          axios.get<Todo[]>(`${API_URL}/todos`, { headers }),
+          api.get<Discipline[]>("/disciplines"),
+          api.get<Todo[]>("/todos"),
         ]);
 
         const loadedDisciplines = disciplinesResponse.data;
@@ -257,14 +254,6 @@ const Home = () => {
         setWeeklyEvaluations(aggregatedWeeklyEvaluations);
       } catch (error: unknown) {
         if (axios.isAxiosError<{ error?: string }>(error)) {
-          const status = error.response?.status;
-          if (status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/login");
-            return;
-          }
-
           setErrorMessage(
             error.response?.data?.error ??
               "Nao foi possivel carregar os dados da home.",
@@ -307,15 +296,7 @@ const Home = () => {
         payload.description = trimmedDescription;
       }
 
-      const response = await axios.post<DisciplineCreateResponse>(
-        `${API_URL}/disciplines`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.post<DisciplineCreateResponse>("/disciplines", payload);
 
       setDisciplines((prev) => [
         ...prev,
@@ -335,15 +316,6 @@ const Home = () => {
       setIsDisciplineFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setDisciplineFormError(
           error.response?.data?.error ?? "Nao foi possivel criar a disciplina.",
         );
@@ -375,30 +347,13 @@ const Home = () => {
     setIsTodoSubmitting(true);
 
     try {
-      const response = await axios.post<Todo>(
-        `${API_URL}/todos`,
-        { title: trimmedTitle },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.post<Todo>("/todos", { title: trimmedTitle });
 
       setTodos((previous) => [...previous, response.data]);
       setTodoTitle("");
       setIsTodoFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setTodoFormError(
           error.response?.data?.error ?? "Nao foi possivel criar o to-do.",
         );
@@ -422,15 +377,7 @@ const Home = () => {
     setTogglingTodoId(todoId);
 
     try {
-      const response = await axios.patch<Todo>(
-        `${API_URL}/todos/${todoId}/toggle`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.patch<Todo>(`/todos/${todoId}/toggle`, {});
 
       setTodos((previous) =>
         previous.map((todo) =>
@@ -448,15 +395,6 @@ const Home = () => {
       );
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setTodoActionError(
           error.response?.data?.error ??
             "Nao foi possivel atualizar o status do to-do.",

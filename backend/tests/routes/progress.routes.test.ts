@@ -5,7 +5,7 @@
 // - GET /progress
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { build } from "../app";
+import { build } from "../../src/app";
 import type { FastifyInstance } from "fastify";
 
 let app: FastifyInstance;

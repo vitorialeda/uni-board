@@ -1,8 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
-import { handle401 } from "../lib/auth";
+import { api } from "../lib/api";
 import type { Topic, Evaluation, Schedule } from "../lib/types";
 import "./RagImportModal.css";
 
@@ -65,7 +63,6 @@ async function extractTextFromPdf(file: File): Promise<string> {
 
 /* ── Component ── */
 const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
-  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<Step>("input");
@@ -77,8 +74,6 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
   // Review state
   const [extracted, setExtracted] = useState<ExtractedData>({});
   const [insertedResult, setInsertedResult] = useState<InsertedResult | null>(null);
-
-  const token = localStorage.getItem("token");
 
   /* ── Handle PDF file pick ── */
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,14 +118,13 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
     setError("");
 
     try {
-      const res = await axios.post<{ extracted: ExtractedData }>(
-        `${API_URL}/rag/extract`,
+      const res = await api.post<{ extracted: ExtractedData }>(
+        "/rag/extract",
         {
           content: textContent,
           contentType: inputMode === "pdf" ? "pdf" : "text",
           disciplineId,
         },
-        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       const data = res.data.extracted;
@@ -151,8 +145,6 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
       setStep("review");
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        if (handle401(err.response?.status, navigate)) return;
-
         const status = err.response?.status;
         const serverMsg = (err.response?.data as { error?: string })?.error;
 
@@ -168,7 +160,7 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
       }
       setStep("input");
     }
-  }, [textContent, inputMode, disciplineId, token, navigate]);
+  }, [textContent, inputMode, disciplineId]);
 
   /* ── Step 2 → Confirm ── */
   const handleConfirm = useCallback(async () => {
@@ -176,10 +168,9 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
     setError("");
 
     try {
-      const res = await axios.post<{ inserted: InsertedResult }>(
-        `${API_URL}/rag/confirm/${disciplineId}`,
+      const res = await api.post<{ inserted: InsertedResult }>(
+        `/rag/confirm/${disciplineId}`,
         extracted,
-        { headers: { Authorization: `Bearer ${token}` } },
       );
       setInsertedResult(res.data.inserted);
       setStep("success");
@@ -191,8 +182,6 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
       });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        if (handle401(err.response?.status, navigate)) return;
-
         const status = err.response?.status;
         const serverMsg = (err.response?.data as { error?: string })?.error;
 
@@ -210,7 +199,7 @@ const RagImportModal = ({ disciplineId, onClose, onConfirmed }: Props) => {
       }
       setStep("review");
     }
-  }, [extracted, disciplineId, token, navigate, onConfirmed]);
+  }, [extracted, disciplineId, onConfirmed]);
 
   /* ── Review helpers ── */
   const removeTopic = (i: number) =>

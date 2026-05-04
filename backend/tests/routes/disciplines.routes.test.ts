@@ -4,7 +4,7 @@
 // usuário A não pode ver, editar ou deletar disciplinas do usuário B.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { build } from '../app'
+import { build } from '../../src/app'
 import type { FastifyInstance } from 'fastify'
 
 let app: FastifyInstance

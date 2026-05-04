@@ -1,9 +1,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
-import { getToken, handle401 } from "../lib/auth";
+import { api } from "../lib/api";
 import type { Schedule, DisciplineUpdateResponse } from "../lib/types";
 import ConfirmDeleteBar from "./ConfirmDeleteBar";
 import ItemDropdown from "./ItemDropdown";
@@ -26,7 +24,6 @@ const ScheduleSection = ({
   openDropdownId,
   setOpenDropdownId,
 }: ScheduleSectionProps) => {
-  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dayOfWeek, setDayOfWeek] = useState("1");
@@ -53,25 +50,20 @@ const ScheduleSection = ({
   };
 
   const saveSchedules = async (newSchedules: Schedule[]) => {
-    const token = getToken(navigate);
-    if (!token) return false;
-
     const sorted = [...newSchedules].sort((a, b) => {
       if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
       return a.startTime.localeCompare(b.startTime);
     });
 
     try {
-      const response = await axios.put<DisciplineUpdateResponse>(
-        `${API_URL}/disciplines/${disciplineId}`,
+      const response = await api.put<DisciplineUpdateResponse>(
+        `/disciplines/${disciplineId}`,
         { schedules: sorted },
-        { headers: { Authorization: `Bearer ${token}` } },
       );
       onSchedulesChange((response.data.schedules as Schedule[]) ?? sorted);
       return true;
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        if (handle401(error.response?.status, navigate)) return false;
         setFormError(error.response?.data?.error ?? "Não foi possível salvar o horário.");
       } else {
         setFormError("Erro de conexão ao salvar horário.");

@@ -1,12 +1,12 @@
 import type { FormEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { API_URL, formatDate, toLocalDatetimeValue } from "../lib/utils";
-import { getToken, handle401 } from "../lib/auth";
+import { formatDate, toLocalDatetimeValue } from "../lib/utils";
+import { api } from "../lib/api";
 import type { Evaluation } from "../lib/types";
 import ConfirmDeleteBar from "./ConfirmDeleteBar";
 import ItemDropdown from "./ItemDropdown";
+import { useCardFormScroll } from "../hooks/useCardFormScroll";
 
 type EvaluationSectionProps = {
   disciplineId: string;
@@ -23,7 +23,6 @@ const EvaluationSection = ({
   openDropdownId,
   setOpenDropdownId,
 }: EvaluationSectionProps) => {
-  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
@@ -34,26 +33,7 @@ const EvaluationSection = ({
   const [formError, setFormError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const cardRef = useRef<HTMLElement | null>(null);
-  const formRef = useRef<HTMLFormElement | null>(null);
-
-  useEffect(() => {
-    if (!isFormOpen || !editingId) return;
-
-    const animationId = requestAnimationFrame(() => {
-      const card = cardRef.current;
-      const form = formRef.current;
-      if (!card || !form) return;
-
-      const cardRect = card.getBoundingClientRect();
-      const formRect = form.getBoundingClientRect();
-      const targetTop = card.scrollTop + (formRect.top - cardRect.top) - 8;
-
-      card.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
-    });
-
-    return () => cancelAnimationFrame(animationId);
-  }, [isFormOpen, editingId]);
+  const { cardRef, formRef } = useCardFormScroll(isFormOpen, editingId);
 
   const openCreate = () => {
     setEditingId(null);
@@ -76,8 +56,6 @@ const EvaluationSection = ({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError("");
-    const token = getToken(navigate);
-    if (!token) return;
 
     const trimmedTitle = title.trim();
     if (!trimmedTitle) { setFormError("Informe o título da avaliação."); return; }
@@ -100,17 +78,15 @@ const EvaluationSection = ({
 
     try {
       if (editingId) {
-        const response = await axios.put<Evaluation>(
-          `${API_URL}/disciplines/${disciplineId}/evaluations/${editingId}`,
+        const response = await api.put<Evaluation>(
+          `/disciplines/${disciplineId}/evaluations/${editingId}`,
           payload,
-          { headers: { Authorization: `Bearer ${token}` } },
         );
         onEvaluationsChange(evaluations.map((e) => (e.id === editingId ? response.data : e)));
       } else {
-        const response = await axios.post<Evaluation>(
-          `${API_URL}/disciplines/${disciplineId}/evaluations`,
+        const response = await api.post<Evaluation>(
+          `/disciplines/${disciplineId}/evaluations`,
           payload,
-          { headers: { Authorization: `Bearer ${token}` } },
         );
         onEvaluationsChange([...evaluations, response.data]);
       }
@@ -119,7 +95,6 @@ const EvaluationSection = ({
       setIsFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        if (handle401(error.response?.status, navigate)) return;
         setFormError(error.response?.data?.error ?? "Não foi possível salvar a avaliação.");
       } else {
         setFormError("Erro de conexão ao salvar avaliação.");
@@ -130,34 +105,27 @@ const EvaluationSection = ({
   };
 
   const handleDelete = async (evalId: string) => {
-    const token = getToken(navigate);
-    if (!token) return;
     try {
-      await axios.delete(`${API_URL}/disciplines/${disciplineId}/evaluations/${evalId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/disciplines/${disciplineId}/evaluations/${evalId}`);
       onEvaluationsChange(evaluations.filter((e) => e.id !== evalId));
       setDeletingId(null);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        if (handle401(error.response?.status, navigate)) return;
+        return;
       }
     }
   };
 
   const handleToggle = async (evalId: string) => {
-    const token = getToken(navigate);
-    if (!token) return;
     try {
-      const response = await axios.patch<Evaluation>(
-        `${API_URL}/disciplines/${disciplineId}/evaluations/${evalId}/toggle`,
+      const response = await api.patch<Evaluation>(
+        `/disciplines/${disciplineId}/evaluations/${evalId}/toggle`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } },
       );
       onEvaluationsChange(evaluations.map((e) => (e.id === evalId ? response.data : e)));
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        if (handle401(error.response?.status, navigate)) return;
+        return;
       }
     }
   };

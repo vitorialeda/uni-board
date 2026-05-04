@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import "./shared.css";
-import Home from "./pages/Home.tsx";
-import Login from "./pages/Login.tsx";
-import Register from "./pages/Register.tsx";
-import Discipline from "./pages/Discipline.tsx";
+import Home from "./pages/Home/Home.tsx";
+import Login from "./pages/Login/Login.tsx";
+import Register from "./pages/Register/Register.tsx";
+import Discipline from "./pages/Discipline/Discipline.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>

@@ -1,16 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Topbar from "../components/Topbar";
-import ProgressBanner from "../components/ProgressBanner";
-import TopicSection from "../components/TopicSection";
-import EvaluationSection from "../components/EvaluationSection";
-import ScheduleSection from "../components/ScheduleSection";
-import ReferencesSection from "../components/ReferencesSection";
-import RagImportModal from "../components/RagImportModal";
-import { API_URL, calculateProgress } from "../lib/utils";
-import { handle401 } from "../lib/auth";
-import type { DisciplineDetails } from "../lib/types";
+import Topbar from "../../components/Topbar";
+import ProgressBanner from "../../components/ProgressBanner";
+import TopicSection from "../../components/TopicSection";
+import EvaluationSection from "../../components/EvaluationSection";
+import ScheduleSection from "../../components/ScheduleSection";
+import ReferencesSection from "../../components/ReferencesSection";
+import RagImportModal from "../../components/RagImportModal";
+import { calculateProgress } from "../../lib/utils";
+import { api } from "../../lib/api";
+import type { DisciplineDetails } from "../../lib/types";
 import "./Discipline.css";
 
 const Discipline = () => {
@@ -33,14 +33,10 @@ const Discipline = () => {
       setIsLoading(true);
       setErrorMessage("");
       try {
-        const response = await axios.get<DisciplineDetails>(
-          `${API_URL}/disciplines/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await api.get<DisciplineDetails>(`/disciplines/${id}`);
         setDiscipline(response.data);
       } catch (error: unknown) {
         if (axios.isAxiosError<{ error?: string }>(error)) {
-          if (handle401(error.response?.status, navigate)) return;
           setErrorMessage(error.response?.data?.error ?? "Não foi possível carregar a disciplina.");
         } else {
           setErrorMessage("Erro de conexão ao carregar a disciplina.");
@@ -57,10 +53,7 @@ const Discipline = () => {
     const token = localStorage.getItem("token");
     if (!token || !id) return;
     try {
-      const response = await axios.get<DisciplineDetails>(
-        `${API_URL}/disciplines/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const response = await api.get<DisciplineDetails>(`/disciplines/${id}`);
       setDiscipline(response.data);
     } catch {
       // silently fail — data was already inserted
@@ -99,18 +92,15 @@ const Discipline = () => {
   const progress = calculateProgress(discipline.topics, discipline.evaluations);
 
   const handleSaveProfessor = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
     try {
-      await axios.put(
-        `${API_URL}/disciplines/${discipline.id}`,
+      await api.put(
+        `/disciplines/${discipline.id}`,
         { professor: professorDraft.trim() || null },
-        { headers: { Authorization: `Bearer ${token}` } },
       );
       setDiscipline((prev) => prev ? { ...prev, professor: professorDraft.trim() || null } : prev);
       setEditingProfessor(false);
     } catch (err) {
-      if (axios.isAxiosError(err) && handle401(err.response?.status, navigate)) return;
+      if (axios.isAxiosError(err)) return;
     }
   };
 

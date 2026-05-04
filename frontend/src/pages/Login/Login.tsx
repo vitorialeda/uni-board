@@ -2,7 +2,7 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
+import { api } from "../../lib/api";
 import "./Login.css";
 
 type LoginResponse = {
@@ -27,10 +27,7 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<LoginResponse>(
-        `${API_URL}/auth/login`,
-        { email, password },
-      );
+      const response = await api.post<LoginResponse>("/auth/login", { email, password });
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

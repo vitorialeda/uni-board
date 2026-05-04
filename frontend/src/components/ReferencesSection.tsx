@@ -1,9 +1,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
-import { getToken, handle401 } from "../lib/auth";
+import { api } from "../lib/api";
 import type { DisciplineUpdateResponse } from "../lib/types";
 
 type ReferencesSectionProps = {
@@ -17,7 +15,6 @@ const ReferencesSection = ({
   references,
   onReferencesChange,
 }: ReferencesSectionProps) => {
-  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [value, setValue] = useState("");
@@ -26,21 +23,17 @@ const ReferencesSection = ({
   const handleSave = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError("");
-    const token = getToken(navigate);
-    if (!token) return;
 
     setIsSubmitting(true);
     try {
-      const response = await axios.put<DisciplineUpdateResponse>(
-        `${API_URL}/disciplines/${disciplineId}`,
+      const response = await api.put<DisciplineUpdateResponse>(
+        `/disciplines/${disciplineId}`,
         { references: value.trim() },
-        { headers: { Authorization: `Bearer ${token}` } },
       );
       onReferencesChange(response.data.references);
       setIsFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        if (handle401(error.response?.status, navigate)) return;
         setFormError(error.response?.data?.error ?? "Não foi possível salvar a referência bibliográfica.");
       } else {
         setFormError("Erro de conexão ao salvar referência.");
