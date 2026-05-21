@@ -35,7 +35,7 @@ export async function schedulesRoutes(app: FastifyInstance) {
     }
 
     const schedules = Array.isArray(discipline.schedules)
-      ? discipline.schedules.map((item) => ({
+      ? discipline.schedules.map((item: unknown) => ({
           id: buildScheduleId(discipline.id, item as ScheduleItem),
           disciplineId: discipline.id,
           ...(item as ScheduleItem),

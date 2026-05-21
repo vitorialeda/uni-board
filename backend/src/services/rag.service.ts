@@ -1,9 +1,13 @@
 import Groq from "groq-sdk";
-import dotenv from "dotenv";
+import { env } from "../config/env.js";
 
-dotenv.config();
+function getGroqClient() {
+  if (!env.groqApiKey) {
+    throw new Error("GROQ_API_KEY is required to use document import.");
+  }
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  return new Groq({ apiKey: env.groqApiKey });
+}
 
 const SYSTEM_PROMPT = `Você é um assistente que extrai dados acadêmicos de documentos universitários.
 Retorne APENAS um objeto JSON válido, sem explicações, sem markdown, sem texto adicional.
@@ -42,6 +46,7 @@ export async function extractFromDocument(
   contentType: "text" | "pdf",
   disciplineName?: string,
 ): Promise<ExtractedData> {
+  const groq = getGroqClient();
   const contextLine = disciplineName
     ? `\nContexto: o documento pertence à disciplina "${disciplineName}".`
     : "";
