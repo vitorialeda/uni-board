@@ -60,7 +60,7 @@ export async function getDisciplineController(_app, request, reply) {
     const { userId } = request.user;
     const discipline = await prisma.discipline.findUnique({
         where: { id },
-        include: { topics: true, evaluations: true },
+        include: { topics: true, evaluations: true, notes: true },
     });
     if (!discipline) {
         return reply.status(404).send({ error: "Disciplina não encontrada" });

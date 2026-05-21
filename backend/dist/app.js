@@ -10,6 +10,7 @@ import { schedulesRoutes } from "./routes/schedules.routes.js";
 import { todosRoutes } from "./routes/todos.routes.js";
 import { progressRoutes } from "./routes/progress.routes.js";
 import { ragRoutes } from "./routes/rag.routes.js";
+import { notesRoutes } from "./routes/notes.routes.js";
 dotenv.config();
 export function build() {
     const app = Fastify({ logger: false });
@@ -25,6 +26,7 @@ export function build() {
     app.register(disciplinesRoutes, { prefix: "/disciplines" });
     app.register(topicsRoutes, { prefix: "/disciplines/:id/topics" });
     app.register(evaluationsRoutes, { prefix: "/disciplines/:id/evaluations" });
+    app.register(notesRoutes, { prefix: "/disciplines/:id/notes" });
     app.register(schedulesRoutes, { prefix: "/disciplines/:id/schedules" });
     app.register(todosRoutes, { prefix: "/todos" });
     app.register(progressRoutes, { prefix: "/progress" });

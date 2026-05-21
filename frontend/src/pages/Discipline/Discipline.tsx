@@ -7,6 +7,7 @@ import TopicSection from "../../components/TopicSection";
 import EvaluationSection from "../../components/EvaluationSection";
 import ScheduleSection from "../../components/ScheduleSection";
 import ReferencesSection from "../../components/ReferencesSection";
+import NotesSection from "../../components/NotesSection";
 import RagImportModal from "../../components/RagImportModal";
 import { calculateProgress } from "../../lib/utils";
 import { api } from "../../lib/api";
@@ -190,10 +191,10 @@ const Discipline = () => {
             setOpenDropdownId={setOpenDropdownId}
           />
 
-          <ScheduleSection
+          <NotesSection
             disciplineId={discipline.id}
-            schedules={discipline.schedules}
-            onSchedulesChange={(schedules) => setDiscipline((prev) => prev ? { ...prev, schedules } : prev)}
+            notes={discipline.notes}
+            onNotesChange={(notes) => setDiscipline((prev) => prev ? { ...prev, notes } : prev)}
             openDropdownId={openDropdownId}
             setOpenDropdownId={setOpenDropdownId}
           />
@@ -202,6 +203,14 @@ const Discipline = () => {
             disciplineId={discipline.id}
             references={discipline.references}
             onReferencesChange={(references) => setDiscipline((prev) => prev ? { ...prev, references } : prev)}
+          />
+
+          <ScheduleSection
+            disciplineId={discipline.id}
+            schedules={discipline.schedules}
+            onSchedulesChange={(schedules) => setDiscipline((prev) => prev ? { ...prev, schedules } : prev)}
+            openDropdownId={openDropdownId}
+            setOpenDropdownId={setOpenDropdownId}
           />
         </div>
       </main>

@@ -86,7 +86,7 @@ export async function getDisciplineController(
 
   const discipline = await prisma.discipline.findUnique({
     where: { id },
-    include: { topics: true, evaluations: true },
+    include: { topics: true, evaluations: true, notes: true },
   });
 
   if (!discipline) {

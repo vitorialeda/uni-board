@@ -235,6 +235,54 @@
   border-radius: var(--radius-md);
 }
 
+/* ── Notes ── */
+.disc-note-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-note-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-container-low);
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.disc-note-item:hover {
+  background: var(--surface-container-high);
+}
+
+.disc-note-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.disc-note-content {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--on-surface);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.disc-note-meta {
+  font-family: var(--font-body);
+  font-size: var(--text-label-sm);
+  color: var(--on-surface-variant);
+}
+
+.disc-note-right {
+  flex-shrink: 0;
+}
+
 /* ── Responsive (page-specific) ── */
 @media (max-width: 768px) {
   .disc-progress-banner {
