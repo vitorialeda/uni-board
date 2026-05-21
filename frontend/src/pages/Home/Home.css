@@ -1,59 +1,66 @@
 /* ─────────────────────────────────────────────────────────────
-   Home Page — page-specific styles only
-   (shared styles in /src/shared.css)
+   Home Page — Retro OS UI
    ───────────────────────────────────────────────────────────── */
 
-/* ── Discipline list ── */
-.home-discipline-list {
+.home-discipline-list,
+.home-eval-list,
+.home-todo-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   list-style: none;
 }
 
-.home-discipline-item {
+.home-discipline-item,
+.home-eval-item,
+.home-todo-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-container-low);
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: #fff;
+  border: 1px solid #000;
   border-radius: var(--radius-md);
-  transition: background 0.15s ease;
   text-decoration: none;
 }
 
-.home-discipline-item:hover {
-  background: var(--surface-container-high);
+.home-discipline-item:hover,
+.home-eval-item:hover,
+.home-todo-item:hover {
+  background: #eef6ff;
 }
 
-.home-discipline-item-left {
+.home-discipline-item-left,
+.home-eval-left {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
   min-width: 0;
 }
 
 .home-discipline-name {
-  font-family: var(--font-display);
-  font-size: var(--text-body-lg);
-  font-weight: 600;
   color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-decoration: none;
 }
 
-.home-discipline-desc {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
+.home-discipline-desc,
+.home-eval-discipline,
+.home-eval-date {
   color: var(--on-surface-variant);
+  font-size: var(--text-label-lg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Progress bar ── */
 .home-progress-wrap {
   display: flex;
   align-items: center;
@@ -62,30 +69,28 @@
 }
 
 .home-progress-label {
-  font-family: var(--font-body);
+  min-width: 2.6rem;
+  color: var(--on-surface);
   font-size: var(--text-label-sm);
-  font-weight: 600;
-  color: var(--on-surface-variant);
-  min-width: 2.5rem;
+  font-weight: 700;
   text-align: right;
 }
 
 .home-progress-bar {
-  width: 80px;
-  height: 6px;
-  background: var(--surface-variant);
-  border-radius: var(--radius-full);
+  width: 88px;
+  height: 14px;
   overflow: hidden;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-full);
 }
 
 .home-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-container) 100%);
-  border-radius: var(--radius-full);
-  transition: width 0.4s ease;
+  background: linear-gradient(90deg, #1593ff 0%, #0078d7 100%);
+  transition: width 0.35s ease;
 }
 
-/* ── Timetable (weekly grid) ── */
 #schedule-card {
   max-height: none;
   overflow-y: visible;
@@ -93,146 +98,106 @@
 
 .home-timetable-wrapper {
   overflow-x: auto;
+  background: #fff;
+  border: 1px solid #000;
   border-radius: var(--radius-md);
 }
 
 .home-timetable {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: var(--space-2) var(--space-2);
+  min-width: 42rem;
+  border-collapse: collapse;
   table-layout: fixed;
 }
 
+.home-timetable th,
+.home-timetable td {
+  border: 1px solid #000;
+}
+
 .home-timetable thead tr {
-  background: var(--surface-container-low);
+  background: linear-gradient(180deg, #1593ff 0%, #0078d7 100%);
 }
 
 .home-timetable th {
-  font-family: var(--font-display);
-  font-size: var(--text-label-sm);
-  font-weight: 700;
-  color: var(--on-surface-variant);
-  text-align: center;
   padding: var(--space-3) var(--space-2);
-  letter-spacing: 0.06em;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
   text-transform: uppercase;
 }
 
 .home-timetable th:first-child {
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  width: 7.5rem;
   text-align: left;
   padding-left: var(--space-4);
-  width: 7.5rem;
-}
-
-.home-timetable th:last-child {
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 .home-timetable-corner {
-  font-size: var(--text-label-sm) !important;
-  color: var(--on-surface-variant) !important;
+  color: #fff !important;
 }
 
 .home-timetable-day-header {
   min-width: 6rem;
 }
 
-.home-timetable tbody tr {
-  transition: background 0.15s ease;
-}
-
 .home-timetable tbody tr:hover {
-  background: var(--surface-container-low);
+  background: #f7fbff;
 }
 
 .home-timetable-time {
-  font-family: var(--font-body);
-  font-size: var(--text-label-lg);
-  font-weight: 600;
-  color: var(--on-surface-variant);
   padding: var(--space-3) var(--space-4);
+  background: #f4f4f4;
+  color: var(--on-surface);
+  font-size: var(--text-label-lg);
+  font-weight: 700;
   white-space: nowrap;
   text-align: left;
   vertical-align: middle;
 }
 
 .home-timetable-time-sep {
-  margin: 0 0.15em;
   opacity: 0.5;
 }
 
 .home-timetable-cell {
+  height: 3rem;
+  padding: var(--space-2);
   text-align: center;
   vertical-align: middle;
-  line-height: 0%;
-  padding: var(--space-2);
-  height: 3rem;
+  background: #fff;
 }
 
 .home-timetable-cell--filled {
-  border-radius: var(--radius-md);
+  background: transparent;
 }
 
 .home-timetable-discipline {
-  font-family: var(--font-body);
+  display: block;
+  padding: 0.35rem 0.25rem;
+  color: #fff;
   font-size: var(--text-label-sm);
-  font-weight: 600;
-  color: #f5f7fa;
+  font-weight: 700;
   line-height: 1.3;
   text-decoration: none;
-  transition: opacity 0.15s ease;
 }
 
 .home-timetable-discipline:hover {
-  opacity: 0.85;
   text-decoration: underline;
 }
 
 .home-timetable-empty {
+  color: #a0a0a0;
   font-size: var(--text-label-sm);
-  color: var(--outline-variant);
-  opacity: 0.5;
 }
 
-/* ── Evaluation list ── */
-.home-eval-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  list-style: none;
-}
-
-.home-eval-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-2) var(--space-3);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-}
-
-.home-eval-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-}
-
-.home-eval-title {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  font-weight: 600;
+.home-eval-title,
+.home-todo-title {
   color: var(--on-surface);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.home-eval-discipline {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
-  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+  font-weight: 700;
 }
 
 .home-eval-right {
@@ -242,54 +207,28 @@
   flex-shrink: 0;
 }
 
-.home-eval-date {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
-  color: var(--on-surface-variant);
-}
-
-/* ── Todo list ── */
-.home-todo-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  list-style: none;
-}
-
 .home-todo-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-  transition: background 0.15s ease;
-}
-
-.home-todo-item:hover {
-  background: var(--surface-container-high);
+  justify-content: flex-start;
 }
 
 .home-todo-check {
-  width: 1.125rem;
-  height: 1.125rem;
-  border: 2px solid var(--outline-variant);
-  border-radius: 0.3rem;
-  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
   color: transparent;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
 }
 
 .home-todo-check--done {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: linear-gradient(180deg, #1593ff 0%, #0078d7 100%);
   color: #fff;
 }
 
@@ -299,13 +238,24 @@
 }
 
 .home-todo-title {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  color: var(--on-surface);
   flex: 1;
 }
 
 .home-todo-title--done {
-  text-decoration: line-through;
   color: var(--on-surface-variant);
+  text-decoration: line-through;
+}
+
+@media (max-width: 768px) {
+  .home-discipline-item,
+  .home-eval-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-progress-wrap,
+  .home-eval-right {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

@@ -1,46 +1,43 @@
 /* ─────────────────────────────────────────────────────────────
-   The Elevated Academic — Design System
+   Retro OS UI — Design Tokens
    ───────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Silkscreen:wght@400;700&display=swap');
 
-/* ── Tokens ── */
 :root {
-  /* Surface */
-  --surface:                  #f8f9fa;
+  --surface: #f0f0f0;
   --surface-container-lowest: #ffffff;
-  --surface-container-low:    #f3f4f5;
-  --surface-container:        #edeeef;
-  --surface-container-high:   #e7e8e9;
-  --surface-container-highest:#dfe0e1;
-  --surface-variant:          #dfe2f0;
+  --surface-container-low: #fafafa;
+  --surface-container: #e7e7e7;
+  --surface-container-high: #d7d7d7;
+  --surface-container-highest: #a0a0a0;
+  --surface-variant: #c8c8c8;
 
-  /* Brand */
-  --primary:                  #0050cb;
-  --primary-container:        #0066ff;
-  --primary-fixed:            #dae1ff;
-  --on-primary:               #ffffff;
-  --on-primary-fixed-variant: #003fa4;
+  --primary: #0078d7;
+  --primary-container: #005fb8;
+  --primary-fixed: #d9ecff;
+  --on-primary: #ffffff;
+  --on-primary-fixed-variant: #003a73;
 
-  /* Secondary */
-  --secondary-container:      #9bb4fe;
-  --on-secondary-container:   #294487;
+  --secondary-container: #ededed;
+  --on-secondary-container: #1a1a1a;
 
-  /* Text */
-  --on-surface:               #191c1d;
-  --on-surface-variant:       #43474e;
-  --outline-variant:          #c2c6d8;
+  --danger: #e81123;
+  --success: #198754;
+  --warning: #d99a00;
 
-  /* Radius */
-  --radius-md:   0.75rem;
-  --radius-lg:   1rem;
+  --on-surface: #101010;
+  --on-surface-variant: #4d4d4d;
+  --outline-variant: #7b7b7b;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
   --radius-full: 9999px;
 
-  /* Shadow */
-  --shadow-ambient: 0 12px 32px -4px rgba(25, 28, 29, 0.06);
-  --shadow-elevated: 0 20px 48px -8px rgba(25, 28, 29, 0.12);
+  --shadow-ambient: 1px 1px 0 rgba(0, 0, 0, 0.18);
+  --shadow-elevated: 2px 2px 0 rgba(0, 0, 0, 0.18);
 
-  /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -51,27 +48,25 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-14: 3.5rem;
-  --space-section: 2.75rem;
+  --space-section: 2.5rem;
 
-  /* Typography scale */
-  --font-display: 'Manrope', sans-serif;
-  --font-body:    'Inter', sans-serif;
+  --font-display: "Silkscreen", monospace;
+  --font-body: "Inter", sans-serif;
 
-  --text-display-lg: 3.5rem;
-  --text-display-md: 2.75rem;
-  --text-display-sm: 2.25rem;
-  --text-headline-lg: 2rem;
-  --text-headline-md: 1.75rem;
-  --text-headline-sm: 1.5rem;
-  --text-title-lg:    1.25rem;
-  --text-title-md:    1.125rem;
-  --text-body-lg:     1rem;
-  --text-body-md:     0.875rem;
-  --text-label-lg:    0.875rem;
-  --text-label-sm:    0.75rem;
+  --text-display-lg: 2.5rem;
+  --text-display-md: 2rem;
+  --text-display-sm: 1.5rem;
+  --text-headline-lg: 1.6rem;
+  --text-headline-md: 1.35rem;
+  --text-headline-sm: 1.1rem;
+  --text-title-lg: 1rem;
+  --text-title-md: 0.9rem;
+  --text-body-lg: 1rem;
+  --text-body-md: 0.875rem;
+  --text-label-lg: 0.8rem;
+  --text-label-sm: 0.72rem;
 }
 
-/* ── Reset & Base ── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -80,22 +75,38 @@
 
 html {
   font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
 }
 
 body {
+  min-height: 100vh;
   font-family: var(--font-body);
   font-size: var(--text-body-lg);
+  line-height: 1.55;
   color: var(--on-surface);
   background-color: var(--surface);
-  min-height: 100vh;
-  line-height: 1.6;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.75) 0,
+      rgba(255, 255, 255, 0.75) 2px,
+      rgba(238, 238, 238, 0.9) 2px,
+      rgba(238, 238, 238, 0.9) 7px
+    );
 }
 
 #root {
   min-height: 100vh;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-body);
 }
 
 a {
@@ -107,7 +118,6 @@ a:hover {
   color: var(--primary-container);
 }
 
-/* ── Utility: visually-hidden ── */
 .sr-only {
   position: absolute;
   width: 1px;

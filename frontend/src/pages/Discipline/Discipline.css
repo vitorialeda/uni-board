@@ -1,17 +1,16 @@
 /* ─────────────────────────────────────────────────────────────
-   Discipline Detail Page — page-specific styles only
-   (shared styles in /src/shared.css)
+   Discipline Detail Page — Retro OS UI
    ───────────────────────────────────────────────────────────── */
 
-/* ── Progress banner ── */
 .disc-progress-banner {
   display: flex;
   align-items: center;
   gap: var(--space-6);
   margin-bottom: var(--space-section);
   padding: var(--space-5) var(--space-6);
-  background: var(--surface-container-lowest);
-  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-ambient);
 }
 
@@ -31,7 +30,7 @@
 
 .disc-progress-ring-bg {
   fill: none;
-  stroke: var(--surface-variant);
+  stroke: #d6d6d6;
   stroke-width: 6;
 }
 
@@ -39,7 +38,7 @@
   fill: none;
   stroke: url(#disc-progress-gradient);
   stroke-width: 6;
-  stroke-linecap: round;
+  stroke-linecap: square;
   transition: stroke-dashoffset 0.6s ease;
 }
 
@@ -51,127 +50,95 @@
   justify-content: center;
   line-height: 1;
   font-family: var(--font-display);
-  font-size: var(--text-title-lg);
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--on-surface);
 }
 
 .disc-progress-details {
   display: flex;
   gap: var(--space-8);
+  flex-wrap: wrap;
 }
 
 .disc-progress-stat {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.15rem;
 }
 
 .disc-progress-stat-value {
-  font-family: var(--font-display);
-  font-size: var(--text-title-lg);
-  font-weight: 700;
   color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .disc-progress-stat-label {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
   color: var(--on-surface-variant);
+  font-size: var(--text-label-sm);
+  text-transform: uppercase;
 }
 
-/* ── Topic list ── */
-.disc-topic-list {
+.disc-topic-list,
+.disc-eval-list,
+.disc-note-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   list-style: none;
 }
 
-.disc-topic-item {
+.disc-topic-item,
+.disc-eval-item,
+.disc-note-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-  transition: background 0.15s ease;
-}
-
-.disc-topic-item:hover {
-  background: var(--surface-container-high);
-}
-
-.disc-topic-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-}
-
-.disc-topic-title {
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  font-weight: 600;
-  color: var(--on-surface);
-}
-
-.disc-topic-meta {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
-  color: var(--on-surface-variant);
-}
-
-.disc-topic-right {
-  display: flex;
-  align-items: center;
   gap: var(--space-3);
-  flex-shrink: 0;
-}
-
-/* ── Evaluation list ── */
-.disc-eval-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  list-style: none;
-}
-
-.disc-eval-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-container-low);
+  padding: var(--space-3);
+  background: #fff;
+  border: 1px solid #000;
   border-radius: var(--radius-md);
-  transition: background 0.15s ease;
 }
 
-.disc-eval-item:hover {
-  background: var(--surface-container-high);
+.disc-topic-item:hover,
+.disc-eval-item:hover,
+.disc-note-item:hover {
+  background: #eef6ff;
 }
 
-.disc-eval-left {
+.disc-note-item {
+  align-items: flex-start;
+}
+
+.disc-topic-left,
+.disc-eval-left,
+.disc-note-left {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.15rem;
   min-width: 0;
 }
 
+.disc-topic-title,
 .disc-eval-title {
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  font-weight: 600;
   color: var(--on-surface);
+  font-size: var(--text-body-md);
+  font-weight: 700;
 }
 
-.disc-eval-meta {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
+.disc-topic-meta,
+.disc-eval-meta,
+.disc-note-meta,
+.disc-schedule-time {
   color: var(--on-surface-variant);
+  font-size: var(--text-label-lg);
 }
 
-.disc-eval-right {
+.disc-topic-right,
+.disc-eval-right,
+.disc-note-right {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -179,16 +146,15 @@
 }
 
 .disc-eval-grade {
-  font-family: var(--font-display);
-  font-size: var(--text-body-md);
+  padding: 0.2rem 0.45rem;
+  background: #e8f3ff;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
+  color: var(--primary-container);
+  font-size: var(--text-label-sm);
   font-weight: 700;
-  color: var(--on-surface);
-  background: var(--surface-container-high);
-  padding: 0.125rem var(--space-2);
-  border-radius: var(--radius-md);
 }
 
-/* ── Schedule chips ── */
 .disc-schedule-list {
   display: flex;
   flex-wrap: wrap;
@@ -201,96 +167,51 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  background: var(--surface-container-low);
+  background: #fff;
+  border: 1px solid #000;
   border-radius: var(--radius-md);
-  transition: background 0.15s ease;
 }
 
 .disc-schedule-chip:hover {
-  background: var(--surface-container-high);
+  background: #eef6ff;
 }
 
 .disc-schedule-day {
+  color: var(--primary-container);
   font-family: var(--font-display);
-  font-size: var(--text-label-lg);
+  font-size: 0.68rem;
   font-weight: 700;
-  color: var(--primary);
+  text-transform: uppercase;
 }
 
-.disc-schedule-time {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  color: var(--on-surface-variant);
-}
-
-/* ── References ── */
 .disc-references-text {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
+  padding: var(--space-4);
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
   color: var(--on-surface);
+  font-size: var(--text-body-md);
   line-height: 1.7;
   white-space: pre-wrap;
-  padding: var(--space-4);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-}
-
-/* ── Notes ── */
-.disc-note-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  list-style: none;
-}
-
-.disc-note-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-  transition: background 0.15s ease;
-}
-
-.disc-note-item:hover {
-  background: var(--surface-container-high);
-}
-
-.disc-note-left {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
 }
 
 .disc-note-content {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
   color: var(--on-surface);
+  font-size: var(--text-body-md);
   line-height: 1.6;
   white-space: pre-wrap;
 }
 
-.disc-note-meta {
-  font-family: var(--font-body);
-  font-size: var(--text-label-sm);
-  color: var(--on-surface-variant);
-}
-
-.disc-note-right {
-  flex-shrink: 0;
-}
-
-/* ── Responsive (page-specific) ── */
 @media (max-width: 768px) {
-  .disc-progress-banner {
+  .disc-progress-banner,
+  .disc-topic-item,
+  .disc-eval-item,
+  .disc-note-item {
+    align-items: flex-start;
     flex-direction: column;
-    text-align: center;
   }
 
   .disc-progress-details {
-    justify-content: center;
+    gap: var(--space-4);
   }
 }
