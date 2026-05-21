@@ -1,0 +1,229 @@
+/* ─────────────────────────────────────────────────────────────
+   Register Page — Retro OS UI
+   ───────────────────────────────────────────────────────────── */
+
+.register-root {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+  place-items: center;
+  padding: var(--space-8);
+}
+
+.register-root--centered {
+  background: transparent;
+}
+
+.register-root--centered .register-form-side {
+  width: 100%;
+  max-width: 36rem;
+  align-items: stretch;
+  text-align: left;
+}
+
+.register-root--centered .register-form {
+  max-width: 100%;
+  text-align: left;
+}
+
+.register-form-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+}
+
+.register-form-side::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1.2rem;
+  background: linear-gradient(180deg, #1084df 0%, #0078d7 100%);
+  border-bottom: 1px solid #000;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.register-form-header {
+  margin-top: 0.7rem;
+  margin-bottom: var(--space-8);
+}
+
+.register-form-eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--danger);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.register-form-title {
+  margin-bottom: var(--space-3);
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: var(--text-headline-md);
+  font-weight: 700;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.register-form-subtitle {
+  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+  line-height: 1.6;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.register-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.register-field-label {
+  color: var(--on-surface);
+  font-size: var(--text-label-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.register-field-input::placeholder {
+  color: #7b7b7b;
+}
+
+.register-password-strength {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.register-strength-bar {
+  flex: 1;
+  height: 10px;
+  background: #d7d7d7;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
+  transition: background 0.3s ease;
+}
+
+.register-strength-bar--active {
+  background: var(--primary);
+}
+
+.register-strength-bar--warn {
+  background: #f5c542;
+}
+
+.register-strength-bar--weak {
+  background: var(--danger);
+}
+
+.register-strength-text {
+  margin-top: var(--space-1);
+  color: var(--on-surface-variant);
+  font-size: var(--text-label-sm);
+}
+
+.register-error,
+.register-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-md);
+  font-weight: 600;
+}
+
+.register-error {
+  background: #ffe6e8;
+  color: var(--danger);
+}
+
+.register-success {
+  background: #e4f5eb;
+  color: #0f5132;
+}
+
+.register-error-icon,
+.register-success-icon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 0.85rem var(--space-6);
+  margin-top: var(--space-2);
+  background: linear-gradient(180deg, #1593ff 0%, #0078d7 100%);
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: var(--text-body-lg);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.register-btn:hover {
+  filter: brightness(1.05);
+}
+
+.register-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.register-btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.register-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.register-footer {
+  margin-top: var(--space-6);
+  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+}
+
+.register-footer a {
+  margin-left: var(--space-1);
+  font-weight: 700;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .register-root {
+    padding: var(--space-4);
+  }
+
+  .register-form-side {
+    padding: var(--space-6);
+  }
+}

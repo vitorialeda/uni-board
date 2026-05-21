@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateProgress } from "./progress.service";
+import { calculateProgress } from "../../src/services/progress.service";
 
 describe("calculateProgress", () => {
   // --- casos de borda ---

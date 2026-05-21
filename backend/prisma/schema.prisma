@@ -22,6 +22,7 @@ model Discipline {
   name        String
   description String?
   references  String?
+  professor   String?
   createdAt   DateTime @default(now())
   schedules   Json     @default("[]") // [{ dayOfWeek: 0-6, startTime: "HH:MM", endTime: "HH:MM" }]
 
@@ -30,6 +31,7 @@ model Discipline {
 
   topics      Topic[]
   evaluations Evaluation[]
+  notes       Note[]
 }
 
 model Topic {
@@ -52,6 +54,16 @@ model Evaluation {
   maxGrade     Float     @default(10)
   completed    Boolean   @default(false)
   createdAt    DateTime  @default(now())
+
+  disciplineId String
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   disciplineId String
   discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)

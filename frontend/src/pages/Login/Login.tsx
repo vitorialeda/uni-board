@@ -1,8 +1,8 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { API_URL } from "../lib/utils";
+import { api } from "../../lib/api";
 import "./Login.css";
 
 type LoginResponse = {
@@ -21,16 +21,17 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    document.title = "Login | Dashboard Universitário";
+  }, []);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage("");
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<LoginResponse>(
-        `${API_URL}/auth/login`,
-        { email, password },
-      );
+      const response = await api.post<LoginResponse>("/auth/login", { email, password });
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

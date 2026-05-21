@@ -1,0 +1,217 @@
+/* ─────────────────────────────────────────────────────────────
+   Discipline Detail Page — Retro OS UI
+   ───────────────────────────────────────────────────────────── */
+
+.disc-progress-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-section);
+  padding: var(--space-5) var(--space-6);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-ambient);
+}
+
+.disc-progress-ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 5rem;
+  height: 5rem;
+}
+
+.disc-progress-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.disc-progress-ring-bg {
+  fill: none;
+  stroke: #d6d6d6;
+  stroke-width: 6;
+}
+
+.disc-progress-ring-fill {
+  fill: none;
+  stroke: url(#disc-progress-gradient);
+  stroke-width: 6;
+  stroke-linecap: square;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.disc-progress-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.disc-progress-details {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.disc-progress-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.disc-progress-stat-value {
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.disc-progress-stat-label {
+  color: var(--on-surface-variant);
+  font-size: var(--text-label-sm);
+  text-transform: uppercase;
+}
+
+.disc-topic-list,
+.disc-eval-list,
+.disc-note-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-topic-item,
+.disc-eval-item,
+.disc-note-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+}
+
+.disc-topic-item:hover,
+.disc-eval-item:hover,
+.disc-note-item:hover {
+  background: #eef6ff;
+}
+
+.disc-note-item {
+  align-items: flex-start;
+}
+
+.disc-topic-left,
+.disc-eval-left,
+.disc-note-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.disc-topic-title,
+.disc-eval-title {
+  color: var(--on-surface);
+  font-size: var(--text-body-md);
+  font-weight: 700;
+}
+
+.disc-topic-meta,
+.disc-eval-meta,
+.disc-note-meta,
+.disc-schedule-time {
+  color: var(--on-surface-variant);
+  font-size: var(--text-label-lg);
+}
+
+.disc-topic-right,
+.disc-eval-right,
+.disc-note-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.disc-eval-grade {
+  padding: 0.2rem 0.45rem;
+  background: #e8f3ff;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
+  color: var(--primary-container);
+  font-size: var(--text-label-sm);
+  font-weight: 700;
+}
+
+.disc-schedule-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.disc-schedule-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+}
+
+.disc-schedule-chip:hover {
+  background: #eef6ff;
+}
+
+.disc-schedule-day {
+  color: var(--primary-container);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.disc-references-text {
+  padding: var(--space-4);
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  color: var(--on-surface);
+  font-size: var(--text-body-md);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.disc-note-content {
+  color: var(--on-surface);
+  font-size: var(--text-body-md);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 768px) {
+  .disc-progress-banner,
+  .disc-topic-item,
+  .disc-eval-item,
+  .disc-note-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .disc-progress-details {
+    gap: var(--space-4);
+  }
+}

@@ -2,8 +2,9 @@ import { useEffect, useMemo, useCallback, useState } from "react";
 import type { FormEvent } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import Topbar from "../components/Topbar";
-import { API_URL, formatDate } from "../lib/utils";
+import Topbar from "../../components/Topbar";
+import { formatDate } from "../../lib/utils";
+import { api } from "../../lib/api";
 import "./Home.css";
 
 type Evaluation = {
@@ -27,6 +28,7 @@ type Discipline = {
   id: string;
   name: string;
   description: string | null;
+  professor: string | null;
   progress: number;
   schedules: ScheduleItem[];
   evaluations: Evaluation[];
@@ -36,6 +38,7 @@ type DisciplineCreateResponse = {
   id: string;
   name: string;
   description: string | null;
+  professor: string | null;
 };
 
 type Schedule = {
@@ -155,6 +158,10 @@ const Home = () => {
   const [todoActionError, setTodoActionError] = useState("");
   const [togglingTodoId, setTogglingTodoId] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = "Visão Geral | Dashboard Universitário";
+  }, []);
+
   const userName = useMemo(() => {
     try {
       const raw = localStorage.getItem("user");
@@ -203,14 +210,10 @@ const Home = () => {
       setIsLoading(true);
       setErrorMessage("");
 
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
       try {
         const [disciplinesResponse, todosResponse] = await Promise.all([
-          axios.get<Discipline[]>(`${API_URL}/disciplines`, { headers }),
-          axios.get<Todo[]>(`${API_URL}/todos`, { headers }),
+          api.get<Discipline[]>("/disciplines"),
+          api.get<Todo[]>("/todos"),
         ]);
 
         const loadedDisciplines = disciplinesResponse.data;
@@ -255,14 +258,6 @@ const Home = () => {
         setWeeklyEvaluations(aggregatedWeeklyEvaluations);
       } catch (error: unknown) {
         if (axios.isAxiosError<{ error?: string }>(error)) {
-          const status = error.response?.status;
-          if (status === 401) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            navigate("/login");
-            return;
-          }
-
           setErrorMessage(
             error.response?.data?.error ??
               "Nao foi possivel carregar os dados da home.",
@@ -305,15 +300,7 @@ const Home = () => {
         payload.description = trimmedDescription;
       }
 
-      const response = await axios.post<DisciplineCreateResponse>(
-        `${API_URL}/disciplines`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.post<DisciplineCreateResponse>("/disciplines", payload);
 
       setDisciplines((prev) => [
         ...prev,
@@ -321,6 +308,7 @@ const Home = () => {
           id: response.data.id,
           name: response.data.name,
           description: response.data.description ?? null,
+          professor: response.data.professor ?? null,
           progress: 0,
           schedules: [],
           evaluations: [],
@@ -332,15 +320,6 @@ const Home = () => {
       setIsDisciplineFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setDisciplineFormError(
           error.response?.data?.error ?? "Nao foi possivel criar a disciplina.",
         );
@@ -372,30 +351,13 @@ const Home = () => {
     setIsTodoSubmitting(true);
 
     try {
-      const response = await axios.post<Todo>(
-        `${API_URL}/todos`,
-        { title: trimmedTitle },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.post<Todo>("/todos", { title: trimmedTitle });
 
       setTodos((previous) => [...previous, response.data]);
       setTodoTitle("");
       setIsTodoFormOpen(false);
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setTodoFormError(
           error.response?.data?.error ?? "Nao foi possivel criar o to-do.",
         );
@@ -419,15 +381,7 @@ const Home = () => {
     setTogglingTodoId(todoId);
 
     try {
-      const response = await axios.patch<Todo>(
-        `${API_URL}/todos/${todoId}/toggle`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.patch<Todo>(`/todos/${todoId}/toggle`, {});
 
       setTodos((previous) =>
         previous.map((todo) =>
@@ -445,15 +399,6 @@ const Home = () => {
       );
     } catch (error: unknown) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        const status = error.response?.status;
-
-        if (status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          navigate("/login");
-          return;
-        }
-
         setTodoActionError(
           error.response?.data?.error ??
             "Nao foi possivel atualizar o status do to-do.",
@@ -501,297 +446,305 @@ const Home = () => {
         <div className="bento-grid">
           {/* ─── Disciplinas ─── */}
           <section className="card" id="disciplines-card">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">Disciplinas</h2>
-                <p className="card-subtitle">
-                  {disciplines.length}{" "}
-                  {disciplines.length === 1 ? "matéria" : "matérias"}
-                </p>
+            <div className="card-scroll">
+              <div className="card-header">
+                <div>
+                  <h2 className="card-title">Disciplinas</h2>
+                  <p className="card-subtitle">
+                    {disciplines.length}{" "}
+                    {disciplines.length === 1 ? "matéria" : "matérias"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className={`btn-secondary ${isDisciplineFormOpen ? "btn-secondary--cancel" : ""}`}
+                  onClick={() => {
+                    setDisciplineFormError("");
+                    setIsDisciplineFormOpen((prev) => !prev);
+                  }}
+                >
+                  {isDisciplineFormOpen ? "✕ Cancelar" : "+ Adicionar"}
+                </button>
               </div>
-              <button
-                type="button"
-                className={`btn-secondary ${isDisciplineFormOpen ? "btn-secondary--cancel" : ""}`}
-                onClick={() => {
-                  setDisciplineFormError("");
-                  setIsDisciplineFormOpen((prev) => !prev);
-                }}
-              >
-                {isDisciplineFormOpen ? "✕ Cancelar" : "+ Adicionar"}
-              </button>
-            </div>
 
-            {isDisciplineFormOpen && (
-              <form className="inline-form" onSubmit={handleCreateDiscipline}>
-                <div className="inline-form-field">
-                  <label className="inline-form-label" htmlFor="discipline-name">
-                    Nome
-                  </label>
-                  <input
-                    id="discipline-name"
-                    className="inline-form-input"
-                    type="text"
-                    placeholder="Ex: Cálculo I"
-                    value={disciplineName}
-                    required
-                    onChange={(e) => setDisciplineName(e.target.value)}
-                  />
-                </div>
-                <div className="inline-form-field">
-                  <label className="inline-form-label" htmlFor="discipline-desc">
-                    Descrição
-                  </label>
-                  <input
-                    id="discipline-desc"
-                    className="inline-form-input"
-                    type="text"
-                    placeholder="Opcional"
-                    value={disciplineDescription}
-                    onChange={(e) => setDisciplineDescription(e.target.value)}
-                  />
-                </div>
-                {disciplineFormError && (
-                  <p className="inline-form-error">{disciplineFormError}</p>
-                )}
-                <div className="inline-form-footer">
-                  <button
-                    type="submit"
-                    className="btn-primary"
-                    disabled={isDisciplineSubmitting}
-                  >
-                    {isDisciplineSubmitting ? "Salvando…" : "Salvar"}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {disciplines.length === 0 ? (
-              <p className="empty-text">Nenhuma disciplina cadastrada.</p>
-            ) : (
-              <ul className="home-discipline-list">
-                {disciplines.map((d) => (
-                  <li key={d.id}>
-                    <Link
-                      to={`/disciplines/${d.id}`}
-                      className="home-discipline-item"
+              {isDisciplineFormOpen && (
+                <form className="inline-form" onSubmit={handleCreateDiscipline}>
+                  <div className="inline-form-field">
+                    <label className="inline-form-label" htmlFor="discipline-name">
+                      Nome
+                    </label>
+                    <input
+                      id="discipline-name"
+                      className="inline-form-input"
+                      type="text"
+                      placeholder="Ex: Cálculo I"
+                      value={disciplineName}
+                      required
+                      onChange={(e) => setDisciplineName(e.target.value)}
+                    />
+                  </div>
+                  <div className="inline-form-field">
+                    <label className="inline-form-label" htmlFor="discipline-desc">
+                      Descrição
+                    </label>
+                    <input
+                      id="discipline-desc"
+                      className="inline-form-input"
+                      type="text"
+                      placeholder="Opcional"
+                      value={disciplineDescription}
+                      onChange={(e) => setDisciplineDescription(e.target.value)}
+                    />
+                  </div>
+                  {disciplineFormError && (
+                    <p className="inline-form-error">{disciplineFormError}</p>
+                  )}
+                  <div className="inline-form-footer">
+                    <button
+                      type="submit"
+                      className="btn-primary"
+                      disabled={isDisciplineSubmitting}
                     >
-                      <div className="home-discipline-item-left">
-                        <span className="home-discipline-name">{d.name}</span>
-                        {d.description && (
-                          <span className="home-discipline-desc">
-                            {d.description}
-                          </span>
-                        )}
-                      </div>
-                      <div className="home-progress-wrap">
-                        <div className="home-progress-bar">
-                          <div
-                            className="home-progress-fill"
-                            style={{ width: `${d.progress * 100}%` }}
-                          />
+                      {isDisciplineSubmitting ? "Salvando…" : "Salvar"}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {disciplines.length === 0 ? (
+                <p className="empty-text">Nenhuma disciplina cadastrada.</p>
+              ) : (
+                <ul className="home-discipline-list">
+                  {disciplines.map((d) => (
+                    <li key={d.id}>
+                      <Link
+                        to={`/disciplines/${d.id}`}
+                        className="home-discipline-item"
+                      >
+                        <div className="home-discipline-item-left">
+                          <span className="home-discipline-name">{d.name}</span>
+                          {d.professor && (
+                            <span className="home-discipline-desc">
+                              {`Prof. ${d.professor}`}
+                            </span>
+                          )}
                         </div>
-                        <span className="home-progress-label">
-                          {(d.progress * 100).toFixed(0)}%
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+                        <div className="home-progress-wrap">
+                          <div className="home-progress-bar">
+                            <div
+                              className="home-progress-fill"
+                              style={{ width: `${d.progress * 100}%` }}
+                            />
+                          </div>
+                          <span className="home-progress-label">
+                            {(d.progress * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </section>
 
           {/* ─── To-do ─── */}
           <section className="card" id="todo-card">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">To-do</h2>
-                <p className="card-subtitle">
-                  {todos.filter((t) => !t.completed).length} pendentes
-                </p>
+            <div className="card-scroll">
+              <div className="card-header">
+                <div>
+                  <h2 className="card-title">To-do</h2>
+                  <p className="card-subtitle">
+                    {todos.filter((t) => !t.completed).length} pendentes
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className={`btn-secondary ${isTodoFormOpen ? "btn-secondary--cancel" : ""}`}
+                  onClick={() => {
+                    setTodoFormError("");
+                    setIsTodoFormOpen((prev) => !prev);
+                  }}
+                >
+                  {isTodoFormOpen ? "✕ Cancelar" : "+ Adicionar"}
+                </button>
               </div>
-              <button
-                type="button"
-                className={`btn-secondary ${isTodoFormOpen ? "btn-secondary--cancel" : ""}`}
-                onClick={() => {
-                  setTodoFormError("");
-                  setIsTodoFormOpen((prev) => !prev);
-                }}
-              >
-                {isTodoFormOpen ? "✕ Cancelar" : "+ Adicionar"}
-              </button>
-            </div>
 
-            {isTodoFormOpen && (
-              <form className="inline-form" onSubmit={handleCreateTodo}>
-                <div className="inline-form-field">
-                  <label className="inline-form-label" htmlFor="todo-title">
-                    Título
-                  </label>
-                  <input
-                    id="todo-title"
-                    className="inline-form-input"
-                    type="text"
-                    placeholder="O que precisa fazer?"
-                    value={todoTitle}
-                    required
-                    onChange={(e) => setTodoTitle(e.target.value)}
-                  />
-                </div>
-                {todoFormError && (
-                  <p className="inline-form-error">{todoFormError}</p>
-                )}
-                <div className="inline-form-footer">
-                  <button
-                    type="submit"
-                    className="btn-primary"
-                    disabled={isTodoSubmitting}
-                  >
-                    {isTodoSubmitting ? "Salvando…" : "Salvar"}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {todoActionError && (
-              <div className="action-error">⚠ {todoActionError}</div>
-            )}
-
-            {todos.length === 0 ? (
-              <p className="empty-text">Nenhum to-do cadastrado.</p>
-            ) : (
-              <ul className="home-todo-list">
-                {todos.map((todo) => (
-                  <li key={todo.id} className="home-todo-item">
+              {isTodoFormOpen && (
+                <form className="inline-form" onSubmit={handleCreateTodo}>
+                  <div className="inline-form-field">
+                    <label className="inline-form-label" htmlFor="todo-title">
+                      Título
+                    </label>
+                    <input
+                      id="todo-title"
+                      className="inline-form-input"
+                      type="text"
+                      placeholder="O que precisa fazer?"
+                      value={todoTitle}
+                      required
+                      onChange={(e) => setTodoTitle(e.target.value)}
+                    />
+                  </div>
+                  {todoFormError && (
+                    <p className="inline-form-error">{todoFormError}</p>
+                  )}
+                  <div className="inline-form-footer">
                     <button
-                      type="button"
-                      className={`home-todo-check ${todo.completed ? "home-todo-check--done" : ""}`}
-                      onClick={() => handleToggleTodo(todo.id)}
-                      disabled={togglingTodoId === todo.id}
-                      aria-label={
-                        todo.completed
-                          ? "Marcar como pendente"
-                          : "Marcar como concluído"
-                      }
+                      type="submit"
+                      className="btn-primary"
+                      disabled={isTodoSubmitting}
                     >
-                      {todo.completed ? "✓" : ""}
+                      {isTodoSubmitting ? "Salvando…" : "Salvar"}
                     </button>
-                    <span
-                      className={`home-todo-title ${todo.completed ? "home-todo-title--done" : ""}`}
-                    >
-                      {todo.title}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+                  </div>
+                </form>
+              )}
+
+              {todoActionError && (
+                <div className="action-error">⚠ {todoActionError}</div>
+              )}
+
+              {todos.length === 0 ? (
+                <p className="empty-text">Nenhum to-do cadastrado.</p>
+              ) : (
+                <ul className="home-todo-list">
+                  {todos.map((todo) => (
+                    <li key={todo.id} className="home-todo-item">
+                      <button
+                        type="button"
+                        className={`home-todo-check ${todo.completed ? "home-todo-check--done" : ""}`}
+                        onClick={() => handleToggleTodo(todo.id)}
+                        disabled={togglingTodoId === todo.id}
+                        aria-label={
+                          todo.completed
+                            ? "Marcar como pendente"
+                            : "Marcar como concluído"
+                        }
+                      >
+                        {todo.completed ? "✓" : ""}
+                      </button>
+                      <span
+                        className={`home-todo-title ${todo.completed ? "home-todo-title--done" : ""}`}
+                      >
+                        {todo.title}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </section>
 
           {/* ─── Horários (Timetable) ─── */}
           <section className="card bento-grid-wide" id="schedule-card">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">Horários</h2>
-                <p className="card-subtitle">Grade semanal</p>
+            <div className="card-scroll">
+              <div className="card-header">
+                <div>
+                  <h2 className="card-title">Horários</h2>
+                  <p className="card-subtitle">Grade semanal</p>
+                </div>
               </div>
-            </div>
 
-            <div className="home-timetable-wrapper">
-              <table className="home-timetable">
-                <thead>
-                  <tr>
-                    <th className="home-timetable-corner">Horário</th>
-                    {WEEKDAYS.map((day) => (
-                      <th key={day.key} className="home-timetable-day-header">
-                        {day.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {TIME_SLOTS.map((slot) => (
-                    <tr key={`${slot.start}-${slot.end}`}>
-                      <td className="home-timetable-time">
-                        {slot.start}
-                        <span className="home-timetable-time-sep">–</span>
-                        {slot.end}
-                      </td>
-                      {WEEKDAYS.map((day) => {
-                        const match = findScheduleForSlot(
-                          schedules,
-                          day.key,
-                          slot.start,
-                          slot.end,
-                        );
-                        const color = match ? getDisciplineColor(match.disciplineId) : null;
-                        return (
-                          <td
-                            key={day.key}
-                            className={`home-timetable-cell ${match ? "home-timetable-cell--filled" : ""}`}
-                            style={
-                              color
-                                ? { backgroundColor: color.bg }
-                                : undefined
-                            }
-                          >
-                          {match ? (
-                              <Link
-                                to={`/disciplines/${match.disciplineId}`}
-                                className="home-timetable-discipline"
-                                style={{ color: color!.text }}
-                              >
-                                {match.disciplineName.split(" - ")[0]}
-                              </Link>
-                            ) : (
-                              <span className="home-timetable-empty">—</span>
-                            )}
-                          </td>
-                        );
-                      })}
+              <div className="home-timetable-wrapper">
+                <table className="home-timetable">
+                  <thead>
+                    <tr>
+                      <th className="home-timetable-corner">Horário</th>
+                      {WEEKDAYS.map((day) => (
+                        <th key={day.key} className="home-timetable-day-header">
+                          {day.label}
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {TIME_SLOTS.map((slot) => (
+                      <tr key={`${slot.start}-${slot.end}`}>
+                        <td className="home-timetable-time">
+                          {slot.start}
+                          <span className="home-timetable-time-sep">–</span>
+                          {slot.end}
+                        </td>
+                        {WEEKDAYS.map((day) => {
+                          const match = findScheduleForSlot(
+                            schedules,
+                            day.key,
+                            slot.start,
+                            slot.end,
+                          );
+                          const color = match ? getDisciplineColor(match.disciplineId) : null;
+                          return (
+                            <td
+                              key={day.key}
+                              className={`home-timetable-cell ${match ? "home-timetable-cell--filled" : ""}`}
+                              style={
+                                color
+                                  ? { backgroundColor: color.bg }
+                                  : undefined
+                              }
+                            >
+                            {match ? (
+                                <Link
+                                  to={`/disciplines/${match.disciplineId}`}
+                                  className="home-timetable-discipline"
+                                  style={{ color: color!.text }}
+                                >
+                                  {match.disciplineName.split(" - ")[0]}
+                                </Link>
+                              ) : (
+                                <span className="home-timetable-empty">—</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
           {/* ─── Avaliações da semana ─── */}
           <section className="card bento-grid-wide" id="evaluations-card">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">Avaliações da semana</h2>
-                <p className="card-subtitle">{weekLabel}</p>
+            <div className="card-scroll">
+              <div className="card-header">
+                <div>
+                  <h2 className="card-title">Avaliações da semana</h2>
+                  <p className="card-subtitle">{weekLabel}</p>
+                </div>
               </div>
-            </div>
 
-            {weeklyEvaluations.length === 0 ? (
-              <p className="empty-text">
-                Nenhuma avaliação para esta semana.
-              </p>
-            ) : (
-              <ul className="home-eval-list">
-                {weeklyEvaluations.map((ev) => (
-                  <li key={ev.id} className="home-eval-item">
-                    <div className="home-eval-left">
-                      <span className="home-eval-title">{ev.title}</span>
-                      <span className="home-eval-discipline">
-                        {ev.disciplineName}
-                      </span>
-                    </div>
-                    <div className="home-eval-right">
-                      <span className="home-eval-date">
-                        {formatDate(ev.date)}
-                      </span>
-                      <span
-                        className={`badge ${ev.completed ? "badge--done" : "badge--pending"}`}
-                      >
-                        {ev.completed ? "Concluída" : "Pendente"}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+              {weeklyEvaluations.length === 0 ? (
+                <p className="empty-text">
+                  Nenhuma avaliação para esta semana.
+                </p>
+              ) : (
+                <ul className="home-eval-list">
+                  {weeklyEvaluations.map((ev) => (
+                    <li key={ev.id} className="home-eval-item">
+                      <div className="home-eval-left">
+                        <span className="home-eval-title">{ev.title}</span>
+                        <span className="home-eval-discipline">
+                          {ev.disciplineName}
+                        </span>
+                      </div>
+                      <div className="home-eval-right">
+                        <span className="home-eval-date">
+                          {formatDate(ev.date)}
+                        </span>
+                        <span
+                          className={`badge ${ev.completed ? "badge--done" : "badge--pending"}`}
+                        >
+                          {ev.completed ? "Concluída" : "Pendente"}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </section>
         </div>
       </main>

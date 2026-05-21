@@ -1,0 +1,261 @@
+/* ─────────────────────────────────────────────────────────────
+   Home Page — Retro OS UI
+   ───────────────────────────────────────────────────────────── */
+
+.home-discipline-list,
+.home-eval-list,
+.home-todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.home-discipline-item,
+.home-eval-item,
+.home-todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.home-discipline-item:hover,
+.home-eval-item:hover,
+.home-todo-item:hover {
+  background: #eef6ff;
+}
+
+.home-discipline-item-left,
+.home-eval-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.home-discipline-name {
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.home-discipline-desc,
+.home-eval-discipline,
+.home-eval-date {
+  color: var(--on-surface-variant);
+  font-size: var(--text-label-lg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.home-progress-label {
+  min-width: 2.6rem;
+  color: var(--on-surface);
+  font-size: var(--text-label-sm);
+  font-weight: 700;
+  text-align: right;
+}
+
+.home-progress-bar {
+  width: 88px;
+  height: 14px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-full);
+}
+
+.home-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1593ff 0%, #0078d7 100%);
+  transition: width 0.35s ease;
+}
+
+#schedule-card {
+  max-height: none;
+  overflow-y: visible;
+}
+
+.home-timetable-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+}
+
+.home-timetable {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.home-timetable th,
+.home-timetable td {
+  border: 1px solid #000;
+}
+
+.home-timetable thead tr {
+  background: linear-gradient(180deg, #1593ff 0%, #0078d7 100%);
+}
+
+.home-timetable th {
+  padding: var(--space-3) var(--space-2);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.home-timetable th:first-child {
+  width: 7.5rem;
+  text-align: left;
+  padding-left: var(--space-4);
+}
+
+.home-timetable-corner {
+  color: #fff !important;
+}
+
+.home-timetable-day-header {
+  min-width: 6rem;
+}
+
+.home-timetable tbody tr:hover {
+  background: #f7fbff;
+}
+
+.home-timetable-time {
+  padding: var(--space-3) var(--space-4);
+  background: #f4f4f4;
+  color: var(--on-surface);
+  font-size: var(--text-label-lg);
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.home-timetable-time-sep {
+  opacity: 0.5;
+}
+
+.home-timetable-cell {
+  height: 3rem;
+  padding: var(--space-2);
+  text-align: center;
+  vertical-align: middle;
+  background: #fff;
+}
+
+.home-timetable-cell--filled {
+  background: transparent;
+}
+
+.home-timetable-discipline {
+  display: block;
+  padding: 0.35rem 0.25rem;
+  color: #fff;
+  font-size: var(--text-label-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.home-timetable-discipline:hover {
+  text-decoration: underline;
+}
+
+.home-timetable-empty {
+  color: #a0a0a0;
+  font-size: var(--text-label-sm);
+}
+
+.home-eval-title,
+.home-todo-title {
+  color: var(--on-surface);
+  font-size: var(--text-body-md);
+  font-weight: 700;
+}
+
+.home-eval-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.home-todo-item {
+  justify-content: flex-start;
+}
+
+.home-todo-check {
+  width: 1.1rem;
+  height: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
+  color: transparent;
+  font-size: 0.7rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.home-todo-check--done {
+  background: linear-gradient(180deg, #1593ff 0%, #0078d7 100%);
+  color: #fff;
+}
+
+.home-todo-check:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.home-todo-title {
+  flex: 1;
+}
+
+.home-todo-title--done {
+  color: var(--on-surface-variant);
+  text-decoration: line-through;
+}
+
+@media (max-width: 768px) {
+  .home-discipline-item,
+  .home-eval-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-progress-wrap,
+  .home-eval-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

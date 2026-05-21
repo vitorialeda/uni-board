@@ -1,0 +1,218 @@
+/* ─────────────────────────────────────────────────────────────
+   RAG Import Modal — Retro OS UI
+   ───────────────────────────────────────────────────────────── */
+
+.rag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.rag-modal {
+  position: relative;
+  width: min(42rem, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: var(--space-8);
+  background: #f8f8f8;
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+}
+
+.rag-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1rem;
+  background: linear-gradient(180deg, #1084df 0%, #0078d7 100%);
+  border-bottom: 1px solid #000;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.rag-close {
+  position: absolute;
+  top: 0.18rem;
+  right: 0.3rem;
+  z-index: 1;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #000;
+  border-radius: var(--radius-sm);
+  background: #f0f0f0;
+  color: #000;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.rag-close:hover {
+  background: #fff;
+}
+
+.rag-header {
+  margin-top: 0.8rem;
+  margin-bottom: var(--space-6);
+}
+
+.rag-header-eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--danger);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.rag-header-title {
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: var(--text-headline-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rag-header-desc {
+  margin-top: var(--space-2);
+  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+  line-height: 1.5;
+}
+
+.rag-instructions,
+.rag-limits {
+  border: 1px solid #000;
+  border-radius: var(--radius-md);
+}
+
+.rag-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: #fff;
+}
+
+.rag-instructions-title {
+  color: var(--on-surface);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.rag-instructions-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+  line-height: 1.7;
+}
+
+.rag-instructions-list strong {
+  color: var(--on-surface);
+}
+
+.rag-limits {
+  padding: var(--space-3) var(--space-4);
+  background: #f6f6f6;
+}
+
+.rag-limits-title {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--on-surface);
+  font-size: var(--text-label-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rag-limits-list {
+  padding-left: 1rem;
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: var(--text-label-sm);
+  line-height: 1.6;
+}
+
+.rag-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rag-tabs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.rag-tab {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid #000;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: #d7d7d7;
+  color: #555;
+  font-size: var(--text-label-lg);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rag-tab--active {
+  background: #fff;
+  color: var(--on-surface);
+}
+
+.rag-textarea {
+  min-height: 10rem;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.rag-textarea::placeholder {
+  color: #7b7b7b;
+}
+
+.rag-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 10rem;
+  padding: var(--space-6);
+  background: #fff;
+  border: 1px dashed #000;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.rag-upload-zone:hover {
+  background: #eef6ff;
+}
+
+.rag-upload-icon {
+  font-size: 2rem;
+}
+
+.rag-upload-label {
+  color: var(--on-surface-variant);
+  font-size: var(--text-body-md);
+  text-align: center;
+}
+
+.rag-upload-label strong {
+  color: var(--primary-container);
+}
+
+.rag-upload-hint {
+  font-size: var(--text-label-sm);
+  opacity: 0.75;
+}

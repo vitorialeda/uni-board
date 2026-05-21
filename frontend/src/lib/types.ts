@@ -15,6 +15,14 @@ export type Evaluation = {
   completed: boolean;
 };
 
+export type Note = {
+  id: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  disciplineId: string;
+};
+
 export type Schedule = {
   dayOfWeek: number;
   startTime: string;
@@ -26,8 +34,10 @@ export type DisciplineDetails = {
   name: string;
   description: string | null;
   references: string | null;
+  professor: string | null;
   topics: Topic[];
   evaluations: Evaluation[];
+  notes: Note[];
   schedules: Schedule[];
 };
 

@@ -9,7 +9,9 @@ const createTopicSchema = z.object({
   dueDate: z.iso.datetime().optional(),
 });
 
-const updateTopicSchema = createTopicSchema.partial();
+const updateTopicSchema = createTopicSchema.partial().extend({
+  completed: z.boolean().optional(),
+});
 
 // GET /disciplines/:id/topics
 export async function listTopicsController(
@@ -87,7 +89,7 @@ export async function updateTopicController(
     return reply.status(404).send({ error: "Tópico não encontrado" });
   }
 
-  const { title, description, dueDate } = parsed.data;
+  const { title, description, dueDate, completed } = parsed.data;
 
   const updated = await prisma.topic.update({
     where: { id: topicId },
@@ -95,6 +97,7 @@ export async function updateTopicController(
       title,
       description,
       dueDate: dueDate ? new Date(dueDate) : undefined,
+      completed,
     },
   });
 
