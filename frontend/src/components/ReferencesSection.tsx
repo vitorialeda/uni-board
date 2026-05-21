@@ -45,46 +45,48 @@ const ReferencesSection = ({
 
   return (
     <section className="card" id="references-card">
-      <div className="card-header">
-        <div>
-          <h2 className="card-title">Referências</h2>
-          <p className="card-subtitle">Bibliografia e materiais</p>
+      <div className="card-scroll">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title">Referências</h2>
+            <p className="card-subtitle">Bibliografia e materiais</p>
+          </div>
+          <button
+            type="button"
+            className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
+            onClick={() => {
+              setFormError("");
+              setValue(references ?? "");
+              setIsFormOpen((prev) => !prev);
+            }}
+          >
+            {isFormOpen ? "✕ Cancelar" : references?.trim() ? "Editar" : "+ Adicionar"}
+          </button>
         </div>
-        <button
-          type="button"
-          className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
-          onClick={() => {
-            setFormError("");
-            setValue(references ?? "");
-            setIsFormOpen((prev) => !prev);
-          }}
-        >
-          {isFormOpen ? "✕ Cancelar" : references?.trim() ? "Editar" : "+ Adicionar"}
-        </button>
+
+        {isFormOpen && (
+          <form className="inline-form" onSubmit={handleSave}>
+            <div className="inline-form-field">
+              <label className="inline-form-label" htmlFor="references-text">Referência bibliográfica</label>
+              <textarea id="references-text" className="inline-form-textarea" value={value} rows={5} placeholder="Cole ou escreva as referências aqui…" onChange={(e) => setValue(e.target.value)} />
+            </div>
+            {formError && <p className="inline-form-error">{formError}</p>}
+            <div className="inline-form-footer">
+              <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? "Salvando…" : "Salvar"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {!isFormOpen && (
+          references?.trim() ? (
+            <div className="disc-references-text">{references}</div>
+          ) : (
+            <p className="empty-text">Nenhuma referência cadastrada.</p>
+          )
+        )}
       </div>
-
-      {isFormOpen && (
-        <form className="inline-form" onSubmit={handleSave}>
-          <div className="inline-form-field">
-            <label className="inline-form-label" htmlFor="references-text">Referência bibliográfica</label>
-            <textarea id="references-text" className="inline-form-textarea" value={value} rows={5} placeholder="Cole ou escreva as referências aqui…" onChange={(e) => setValue(e.target.value)} />
-          </div>
-          {formError && <p className="inline-form-error">{formError}</p>}
-          <div className="inline-form-footer">
-            <button type="submit" className="btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando…" : "Salvar"}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {!isFormOpen && (
-        references?.trim() ? (
-          <div className="disc-references-text">{references}</div>
-        ) : (
-          <p className="empty-text">Nenhuma referência cadastrada.</p>
-        )
-      )}
     </section>
   );
 };

@@ -130,98 +130,100 @@ const TopicSection = ({
 
   return (
     <section ref={cardRef} className="card" id="topics-card">
-      <div className="card-header">
-        <div>
-          <h2 className="card-title">Tópicos</h2>
-          <p className="card-subtitle">
-            {topics.length} {topics.length === 1 ? "tópico" : "tópicos"}
-          </p>
+      <div className="card-scroll">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title">Tópicos</h2>
+            <p className="card-subtitle">
+              {topics.length} {topics.length === 1 ? "tópico" : "tópicos"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
+            onClick={() => {
+              if (isFormOpen) { setIsFormOpen(false); setEditingId(null); }
+              else openCreate();
+            }}
+          >
+            {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
+          </button>
         </div>
-        <button
-          type="button"
-          className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
-          onClick={() => {
-            if (isFormOpen) { setIsFormOpen(false); setEditingId(null); }
-            else openCreate();
-          }}
-        >
-          {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
-        </button>
-      </div>
 
-      {isFormOpen && (
-        <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
-          <div className="inline-form-field">
-            <label className="inline-form-label" htmlFor="topic-title">Título</label>
-            <input id="topic-title" className="inline-form-input" type="text" placeholder="Ex: Limites e Continuidade" value={title} required onChange={(e) => setTitle(e.target.value)} />
-          </div>
-          <div className="inline-form-row">
+        {isFormOpen && (
+          <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
             <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="topic-desc">Descrição</label>
-              <input id="topic-desc" className="inline-form-input" type="text" placeholder="Opcional" value={description} onChange={(e) => setDescription(e.target.value)} />
+              <label className="inline-form-label" htmlFor="topic-title">Título</label>
+              <input id="topic-title" className="inline-form-input" type="text" placeholder="Ex: Limites e Continuidade" value={title} required onChange={(e) => setTitle(e.target.value)} />
             </div>
-            <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="topic-due">Vencimento</label>
-              <input id="topic-due" className="inline-form-input" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
-            </div>
-          </div>
-          {editingId && (
-            <label className="inline-form-checkbox" htmlFor="topic-completed">
-              <input
-                id="topic-completed"
-                type="checkbox"
-                checked={completed}
-                onChange={(e) => setCompleted(e.target.checked)}
-              />
-              Marcar como concluído
-            </label>
-          )}
-          {formError && <p className="inline-form-error">{formError}</p>}
-          <div className="inline-form-footer">
-            <button type="submit" className="btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando…" : editingId ? "Atualizar" : "Salvar"}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {deletingId && (
-        <ConfirmDeleteBar message="Excluir este tópico?" onCancel={() => setDeletingId(null)} onConfirm={() => handleDelete(deletingId)} />
-      )}
-
-      {topics.length === 0 ? (
-        <p className="empty-text">Nenhum tópico cadastrado.</p>
-      ) : (
-        <ul className="disc-topic-list">
-          {orderedTopics.map((topic) => (
-            <li key={topic.id} className="disc-topic-item">
-              <div className="disc-topic-left">
-                <span className="disc-topic-title">{topic.title}</span>
-                <span className="disc-topic-meta">
-                  {formatDate(topic.dueDate)}
-                  {topic.description ? ` · ${topic.description}` : ""}
-                </span>
+            <div className="inline-form-row">
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="topic-desc">Descrição</label>
+                <input id="topic-desc" className="inline-form-input" type="text" placeholder="Opcional" value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
-              <div className="disc-topic-right">
-                <button
-                  type="button"
-                  className={`badge ${topic.completed ? "badge--done" : "badge--pending"} badge--clickable`}
-                  onClick={() => handleToggle(topic.id)}
-                >
-                  {topic.completed ? "Concluído" : "Pendente"}
-                </button>
-                <ItemDropdown
-                  id={`topic-${topic.id}`}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                  onEdit={() => openEdit(topic)}
-                  onDelete={() => setDeletingId(topic.id)}
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="topic-due">Vencimento</label>
+                <input id="topic-due" className="inline-form-input" type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+              </div>
+            </div>
+            {editingId && (
+              <label className="inline-form-checkbox" htmlFor="topic-completed">
+                <input
+                  id="topic-completed"
+                  type="checkbox"
+                  checked={completed}
+                  onChange={(e) => setCompleted(e.target.checked)}
                 />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                Marcar como concluído
+              </label>
+            )}
+            {formError && <p className="inline-form-error">{formError}</p>}
+            <div className="inline-form-footer">
+              <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? "Salvando…" : editingId ? "Atualizar" : "Salvar"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {deletingId && (
+          <ConfirmDeleteBar message="Excluir este tópico?" onCancel={() => setDeletingId(null)} onConfirm={() => handleDelete(deletingId)} />
+        )}
+
+        {topics.length === 0 ? (
+          <p className="empty-text">Nenhum tópico cadastrado.</p>
+        ) : (
+          <ul className="disc-topic-list">
+            {orderedTopics.map((topic) => (
+              <li key={topic.id} className="disc-topic-item">
+                <div className="disc-topic-left">
+                  <span className="disc-topic-title">{topic.title}</span>
+                  <span className="disc-topic-meta">
+                    {formatDate(topic.dueDate)}
+                    {topic.description ? ` · ${topic.description}` : ""}
+                  </span>
+                </div>
+                <div className="disc-topic-right">
+                  <button
+                    type="button"
+                    className={`badge ${topic.completed ? "badge--done" : "badge--pending"} badge--clickable`}
+                    onClick={() => handleToggle(topic.id)}
+                  >
+                    {topic.completed ? "Concluído" : "Pendente"}
+                  </button>
+                  <ItemDropdown
+                    id={`topic-${topic.id}`}
+                    openDropdownId={openDropdownId}
+                    setOpenDropdownId={setOpenDropdownId}
+                    onEdit={() => openEdit(topic)}
+                    onDelete={() => setDeletingId(topic.id)}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 };

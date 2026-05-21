@@ -136,102 +136,104 @@ const EvaluationSection = ({
 
   return (
     <section ref={cardRef} className="card" id="evaluations-card">
-      <div className="card-header">
-        <div>
-          <h2 className="card-title">Avaliações</h2>
-          <p className="card-subtitle">
-            {evaluations.length} {evaluations.length === 1 ? "avaliação" : "avaliações"}
-          </p>
+      <div className="card-scroll">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title">Avaliações</h2>
+            <p className="card-subtitle">
+              {evaluations.length} {evaluations.length === 1 ? "avaliação" : "avaliações"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
+            onClick={() => {
+              if (isFormOpen) { setIsFormOpen(false); setEditingId(null); }
+              else openCreate();
+            }}
+          >
+            {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
+          </button>
         </div>
-        <button
-          type="button"
-          className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
-          onClick={() => {
-            if (isFormOpen) { setIsFormOpen(false); setEditingId(null); }
-            else openCreate();
-          }}
-        >
-          {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
-        </button>
-      </div>
 
-      {isFormOpen && (
-        <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
-          <div className="inline-form-field">
-            <label className="inline-form-label" htmlFor="eval-title">Título</label>
-            <input id="eval-title" className="inline-form-input" type="text" placeholder="Ex: Prova 1" value={title} required onChange={(e) => setTitle(e.target.value)} />
-          </div>
-          <div className="inline-form-row">
+        {isFormOpen && (
+          <form ref={formRef} className="inline-form" onSubmit={handleSubmit}>
             <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="eval-date">Data</label>
-              <input id="eval-date" className="inline-form-input" type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} />
+              <label className="inline-form-label" htmlFor="eval-title">Título</label>
+              <input id="eval-title" className="inline-form-input" type="text" placeholder="Ex: Prova 1" value={title} required onChange={(e) => setTitle(e.target.value)} />
             </div>
-            <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="eval-max-grade">Nota máxima</label>
-              <input id="eval-max-grade" className="inline-form-input" type="number" min="0.1" step="0.1" value={maxGrade} onChange={(e) => setMaxGrade(e.target.value)} />
-            </div>
-          </div>
-          {editingId && (
-            <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="eval-grade">Nota obtida</label>
-              <input id="eval-grade" className="inline-form-input" type="number" min="0" step="0.1" placeholder="Opcional" value={grade} onChange={(e) => setGrade(e.target.value)} />
-            </div>
-          )}
-          {editingId && (
-            <label className="inline-form-checkbox" htmlFor="eval-completed">
-              <input
-                id="eval-completed"
-                type="checkbox"
-                checked={completed}
-                onChange={(e) => setCompleted(e.target.checked)}
-              />
-              Marcar como concluída
-            </label>
-          )}
-          {formError && <p className="inline-form-error">{formError}</p>}
-          <div className="inline-form-footer">
-            <button type="submit" className="btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando…" : editingId ? "Atualizar" : "Salvar"}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {deletingId && (
-        <ConfirmDeleteBar message="Excluir esta avaliação?" onCancel={() => setDeletingId(null)} onConfirm={() => handleDelete(deletingId)} />
-      )}
-
-      {evaluations.length === 0 ? (
-        <p className="empty-text">Nenhuma avaliação cadastrada.</p>
-      ) : (
-        <ul className="disc-eval-list">
-          {orderedEvaluations.map((ev) => (
-            <li key={ev.id} className="disc-eval-item">
-              <div className="disc-eval-left">
-                <span className="disc-eval-title">{ev.title}</span>
-                <span className="disc-eval-meta">{formatDate(ev.date)}</span>
+            <div className="inline-form-row">
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="eval-date">Data</label>
+                <input id="eval-date" className="inline-form-input" type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
-              <div className="disc-eval-right">
-                <span className="disc-eval-grade">{ev.grade ?? "–"}/{ev.maxGrade}</span>
-                <button
-                  type="button"
-                  className={`badge ${ev.completed ? "badge--done" : "badge--pending"} badge--clickable`}
-                  onClick={() => handleToggle(ev.id)}
-                >
-                  {ev.completed ? "Concluída" : "Pendente"}
-                </button>
-                <ItemDropdown
-                  id={`eval-${ev.id}`}
-                  openDropdownId={openDropdownId}
-                  setOpenDropdownId={setOpenDropdownId}
-                  onEdit={() => openEdit(ev)}
-                  onDelete={() => setDeletingId(ev.id)}
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="eval-max-grade">Nota máxima</label>
+                <input id="eval-max-grade" className="inline-form-input" type="number" min="0.1" step="0.1" value={maxGrade} onChange={(e) => setMaxGrade(e.target.value)} />
+              </div>
+            </div>
+            {editingId && (
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="eval-grade">Nota obtida</label>
+                <input id="eval-grade" className="inline-form-input" type="number" min="0" step="0.1" placeholder="Opcional" value={grade} onChange={(e) => setGrade(e.target.value)} />
+              </div>
+            )}
+            {editingId && (
+              <label className="inline-form-checkbox" htmlFor="eval-completed">
+                <input
+                  id="eval-completed"
+                  type="checkbox"
+                  checked={completed}
+                  onChange={(e) => setCompleted(e.target.checked)}
                 />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                Marcar como concluída
+              </label>
+            )}
+            {formError && <p className="inline-form-error">{formError}</p>}
+            <div className="inline-form-footer">
+              <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? "Salvando…" : editingId ? "Atualizar" : "Salvar"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {deletingId && (
+          <ConfirmDeleteBar message="Excluir esta avaliação?" onCancel={() => setDeletingId(null)} onConfirm={() => handleDelete(deletingId)} />
+        )}
+
+        {evaluations.length === 0 ? (
+          <p className="empty-text">Nenhuma avaliação cadastrada.</p>
+        ) : (
+          <ul className="disc-eval-list">
+            {orderedEvaluations.map((ev) => (
+              <li key={ev.id} className="disc-eval-item">
+                <div className="disc-eval-left">
+                  <span className="disc-eval-title">{ev.title}</span>
+                  <span className="disc-eval-meta">{formatDate(ev.date)}</span>
+                </div>
+                <div className="disc-eval-right">
+                  <span className="disc-eval-grade">{ev.grade ?? "–"}/{ev.maxGrade}</span>
+                  <button
+                    type="button"
+                    className={`badge ${ev.completed ? "badge--done" : "badge--pending"} badge--clickable`}
+                    onClick={() => handleToggle(ev.id)}
+                  >
+                    {ev.completed ? "Concluída" : "Pendente"}
+                  </button>
+                  <ItemDropdown
+                    id={`eval-${ev.id}`}
+                    openDropdownId={openDropdownId}
+                    setOpenDropdownId={setOpenDropdownId}
+                    onEdit={() => openEdit(ev)}
+                    onDelete={() => setDeletingId(ev.id)}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   );
 };

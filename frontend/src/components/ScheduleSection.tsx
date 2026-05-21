@@ -114,77 +114,79 @@ const ScheduleSection = ({
 
   return (
     <section className="card" id="schedules-card">
-      <div className="card-header">
-        <div>
-          <h2 className="card-title">Horários</h2>
-          <p className="card-subtitle">
-            {schedules.length} {schedules.length === 1 ? "horário" : "horários"}
-          </p>
+      <div className="card-scroll">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title">Horários</h2>
+            <p className="card-subtitle">
+              {schedules.length} {schedules.length === 1 ? "horário" : "horários"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
+            onClick={() => {
+              if (isFormOpen) { setIsFormOpen(false); setEditingIndex(null); }
+              else openCreate();
+            }}
+          >
+            {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
+          </button>
         </div>
-        <button
-          type="button"
-          className={`btn-secondary ${isFormOpen ? "btn-secondary--cancel" : ""}`}
-          onClick={() => {
-            if (isFormOpen) { setIsFormOpen(false); setEditingIndex(null); }
-            else openCreate();
-          }}
-        >
-          {isFormOpen ? "✕ Cancelar" : "+ Adicionar"}
-        </button>
+
+        {isFormOpen && (
+          <form className="inline-form" onSubmit={handleSubmit}>
+            <div className="inline-form-field">
+              <label className="inline-form-label" htmlFor="schedule-day">Dia da semana</label>
+              <select id="schedule-day" className="inline-form-select" value={dayOfWeek} onChange={(e) => setDayOfWeek(e.target.value)}>
+                {DAY_LABELS.map((label, index) => (
+                  <option key={label} value={index}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="inline-form-row">
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="schedule-start">Início</label>
+                <input id="schedule-start" className="inline-form-input" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+              </div>
+              <div className="inline-form-field">
+                <label className="inline-form-label" htmlFor="schedule-end">Fim</label>
+                <input id="schedule-end" className="inline-form-input" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+              </div>
+            </div>
+            {formError && <p className="inline-form-error">{formError}</p>}
+            <div className="inline-form-footer">
+              <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? "Salvando…" : editingIndex !== null ? "Atualizar" : "Salvar"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {deletingIndex !== null && (
+          <ConfirmDeleteBar message="Excluir este horário?" onCancel={() => setDeletingIndex(null)} onConfirm={() => handleDelete(deletingIndex)} />
+        )}
+
+        {sortedMapping.length === 0 ? (
+          <p className="empty-text">Nenhum horário cadastrado.</p>
+        ) : (
+          <ul className="disc-schedule-list">
+            {sortedMapping.map(({ s: schedule, i: origIdx }, sortedIdx) => (
+              <li key={`${schedule.dayOfWeek}-${schedule.startTime}-${sortedIdx}`} className="disc-schedule-chip">
+                <span className="disc-schedule-day">{DAY_SHORT[schedule.dayOfWeek]}</span>
+                <span className="disc-schedule-time">{schedule.startTime}–{schedule.endTime}</span>
+                <ItemDropdown
+                  id={`sched-${origIdx}`}
+                  openDropdownId={openDropdownId}
+                  setOpenDropdownId={setOpenDropdownId}
+                  onEdit={() => openEdit(origIdx, schedule)}
+                  onDelete={() => setDeletingIndex(origIdx)}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
-      {isFormOpen && (
-        <form className="inline-form" onSubmit={handleSubmit}>
-          <div className="inline-form-field">
-            <label className="inline-form-label" htmlFor="schedule-day">Dia da semana</label>
-            <select id="schedule-day" className="inline-form-select" value={dayOfWeek} onChange={(e) => setDayOfWeek(e.target.value)}>
-              {DAY_LABELS.map((label, index) => (
-                <option key={label} value={index}>{label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="inline-form-row">
-            <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="schedule-start">Início</label>
-              <input id="schedule-start" className="inline-form-input" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-            </div>
-            <div className="inline-form-field">
-              <label className="inline-form-label" htmlFor="schedule-end">Fim</label>
-              <input id="schedule-end" className="inline-form-input" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-            </div>
-          </div>
-          {formError && <p className="inline-form-error">{formError}</p>}
-          <div className="inline-form-footer">
-            <button type="submit" className="btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando…" : editingIndex !== null ? "Atualizar" : "Salvar"}
-            </button>
-          </div>
-        </form>
-      )}
-
-      {deletingIndex !== null && (
-        <ConfirmDeleteBar message="Excluir este horário?" onCancel={() => setDeletingIndex(null)} onConfirm={() => handleDelete(deletingIndex)} />
-      )}
-
-      {sortedMapping.length === 0 ? (
-        <p className="empty-text">Nenhum horário cadastrado.</p>
-      ) : (
-        <ul className="disc-schedule-list">
-          {sortedMapping.map(({ s: schedule, i: origIdx }, sortedIdx) => (
-            <li key={`${schedule.dayOfWeek}-${schedule.startTime}-${sortedIdx}`} className="disc-schedule-chip">
-              <span className="disc-schedule-day">{DAY_SHORT[schedule.dayOfWeek]}</span>
-              <span className="disc-schedule-time">{schedule.startTime}–{schedule.endTime}</span>
-              <ItemDropdown
-                id={`sched-${origIdx}`}
-                openDropdownId={openDropdownId}
-                setOpenDropdownId={setOpenDropdownId}
-                onEdit={() => openEdit(origIdx, schedule)}
-                onDelete={() => setDeletingIndex(origIdx)}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
     </section>
   );
 };

@@ -15,11 +15,18 @@ export function useCardFormScroll(
       const form = formRef.current;
       if (!card || !form) return;
 
-      const cardRect = card.getBoundingClientRect();
-      const formRect = form.getBoundingClientRect();
-      const targetTop = card.scrollTop + (formRect.top - cardRect.top) - 8;
+      const scrollContainer =
+        card.querySelector<HTMLElement>(".card-scroll") ?? card;
 
-      card.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      const cardRect = scrollContainer.getBoundingClientRect();
+      const formRect = form.getBoundingClientRect();
+      const targetTop =
+        scrollContainer.scrollTop + (formRect.top - cardRect.top) - 8;
+
+      scrollContainer.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth",
+      });
     });
 
     return () => cancelAnimationFrame(animationId);
